@@ -6,17 +6,17 @@
     <title>Академия АЛЬФАПРОМ</title>
     <style>
       :root{
-        --navy:#16233f;
-        --navy-2:#1f3358;
-        --orange:#ff7a3d;
-        --orange-dark:#e8632a;
+        --navy:#2b2d33;
+        --navy-2:#3f4149;
+        --orange:#ff8100;
+        --orange-dark:#cc6700;
         --gray-bg:#f4f5f7;
         --gray-line:#e2e5ea;
         --text:#232733;
         --text-light:#6b7280;
         --white:#ffffff;
         --radius:16px;
-        --shadow:0 10px 30px rgba(22,35,63,0.08);
+        --shadow:0 10px 30px rgba(43,45,51,0.08);
       }
       *{box-sizing:border-box;margin:0;padding:0;}
       html{scroll-behavior:smooth;}
@@ -85,7 +85,7 @@
       }
       .eyebrow{
         display:inline-flex;align-items:center;gap:8px;
-        background:rgba(255,122,61,0.12);color:var(--orange-dark);
+        background:rgba(255,129,0,0.12);color:var(--orange-dark);
         font-weight:700;font-size:13px;padding:8px 14px;border-radius:999px;
         margin-bottom:20px;
       }
@@ -139,7 +139,7 @@
       .criteria-icon{
         width:52px;height:52px;border-radius:14px;margin:0 auto 16px;
         display:flex;align-items:center;justify-content:center;font-size:24px;
-        background:linear-gradient(135deg,rgba(22,35,63,0.06),rgba(255,122,61,0.12));
+        background:linear-gradient(135deg,rgba(43,45,51,0.06),rgba(255,129,0,0.12));
       }
       .criteria-card h3{font-size:16px;color:var(--navy);margin-bottom:8px;font-weight:700;}
       .criteria-card p{font-size:13.5px;color:var(--text-light);margin-bottom:14px;}
@@ -177,7 +177,7 @@
       }
       .level-item.active .level-dot{
         border-color:var(--orange);color:var(--orange-dark);
-        background:rgba(255,122,61,0.08);
+        background:rgba(255,129,0,0.08);
       }
       .level-item h4{font-size:14px;color:var(--navy);font-weight:700;margin-bottom:4px;}
       .level-item span{font-size:12px;color:var(--text-light);}
@@ -199,19 +199,19 @@
       .module-card h4{font-size:15.5px;color:var(--navy);font-weight:700;}
       .module-card p{font-size:13px;color:var(--text-light);margin-bottom:14px;}
       .progress-line{height:8px;background:var(--gray-line);border-radius:8px;overflow:hidden;margin-bottom:8px;}
-      .progress-line i{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,var(--navy),var(--navy-2));}
+      .progress-line i{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,var(--orange),var(--orange-dark));}
       .module-foot{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-light);}
       .stars{color:var(--orange);letter-spacing:2px;}
 
       /* Login section */
       .login-section{
         background:var(--navy);
-        background:linear-gradient(135deg,var(--navy) 0%, #101b32 100%);
+        background:linear-gradient(135deg,var(--navy) 0%, #17181c 100%);
         position:relative;overflow:hidden;
       }
       .login-section::before{
         content:"";position:absolute;top:-80px;right:-80px;width:300px;height:300px;
-        border-radius:50%;background:rgba(255,122,61,0.15);filter:blur(10px);
+        border-radius:50%;background:rgba(255,129,0,0.15);filter:blur(10px);
       }
       .login-grid{
         display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;position:relative;z-index:1;
@@ -222,7 +222,7 @@
       .login-points{display:flex;flex-direction:column;gap:14px;}
       .login-point{display:flex;gap:12px;align-items:flex-start;}
       .login-point .dot{
-        width:24px;height:24px;border-radius:50%;background:rgba(255,122,61,0.18);
+        width:24px;height:24px;border-radius:50%;background:rgba(255,129,0,0.18);
         color:var(--orange);display:flex;align-items:center;justify-content:center;
         font-size:13px;font-weight:800;flex-shrink:0;margin-top:2px;
       }
