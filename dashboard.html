@@ -268,11 +268,12 @@
         <div class="user-detail-card">
           <div class="user-detail-top">
             <div class="user-detail-avatar" id="udAvatar">—</div>
-            <div>
+            <div style="flex:1;">
               <div class="user-detail-name" id="udName">—</div>
               <div class="user-detail-email" id="udEmail">—</div>
               <span class="role-badge" id="udRole" style="margin-top:6px;display:inline-block;">—</span>
             </div>
+            <button class="btn btn-danger btn-sm" id="udDeleteBtn">🗑️ Удалить пользователя</button>
           </div>
           <div class="overall-progress-wrap" style="margin-top:18px;">
             <div class="overall-progress-label"><span>Общий прогресс обучения</span><span id="udOverallPct">0%</span></div>
@@ -981,6 +982,7 @@
               <div class="table-actions">
                 <button class="btn btn-secondary btn-sm" data-action="edit" data-email="${email}">✏️ Изменить</button>
                 <button class="btn btn-secondary btn-sm" data-action="reset" data-email="${email}">🔑 Сброс пароля</button>
+                <button class="btn btn-danger btn-sm" data-action="delete" data-email="${email}">🗑️ Удалить</button>
               </div>
             </td>
           `;
@@ -996,6 +998,9 @@
         });
         tbody.querySelectorAll('button[data-action="reset"]').forEach((btn) => {
           btn.addEventListener('click', () => resetUserPassword(btn.dataset.email));
+        });
+        tbody.querySelectorAll('button[data-action="delete"]').forEach((btn) => {
+          btn.addEventListener('click', () => deleteUser(btn.dataset.email));
         });
       }
 
@@ -1062,7 +1067,10 @@
         renderUsersTable();
       }
 
+      let currentDetailEmail = null;
+
       function openUserDetail(email) {
+        currentDetailEmail = email;
         const u = allUsersCache[email] || {};
         const name = u.name || email;
         const initials = name.split(' ').map(s => s[0]).join('').slice(0,2).toUpperCase();
@@ -1128,6 +1136,44 @@
           const usersNav = document.getElementById('usersNavItem');
           if (usersNav) usersNav.classList.add('active');
         });
+      }
+
+      const udDeleteBtn = document.getElementById('udDeleteBtn');
+      if (udDeleteBtn) {
+        udDeleteBtn.addEventListener('click', () => {
+          if (currentDetailEmail) deleteUser(currentDetailEmail);
+        });
+      }
+
+      async function deleteUser(email) {
+        if (email === ADMIN_EMAIL) {
+          alert('Нельзя удалить учётную запись администратора.');
+          return;
+        }
+        const name = (allUsersCache[email] && allUsersCache[email].name) || email;
+        const confirmed = confirm(
+          `Удалить сотрудника «${name}» (${email})?\n\n` +
+          `Все данные и прогресс обучения будут безвозвратно удалены из системы. ` +
+          `Доступ к личному кабинету будет закрыт.`
+        );
+        if (!confirmed) return;
+
+        try {
+          await deleteDoc(doc(db, 'users', email));
+          delete allUsersCache[email];
+
+          alert('Сотрудник удалён из системы.');
+
+          if (document.getElementById('view-userdetail').classList.contains('active')) {
+            switchView('users');
+            document.getElementById('topbarTitle').textContent = 'Пользователи';
+            const usersNav = document.getElementById('usersNavItem');
+            if (usersNav) usersNav.classList.add('active');
+          }
+          renderUsersTable();
+        } catch (err) {
+          alert('Не удалось удалить пользователя: ' + (err.message || 'неизвестная ошибка'));
+        }
       }
 
       async function resetUserPassword(email) {
