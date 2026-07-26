@@ -150,6 +150,27 @@
         .logout-item{margin-top:0;}
         .main{padding:24px;}
       }
+
+      .users-table-wrap{background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow); overflow-x:auto;}
+      table.users-table{width:100%; border-collapse:collapse; min-width:760px;}
+      table.users-table th{
+        text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:.04em;
+        color:var(--text-light); font-weight:700; padding:14px 18px; border-bottom:1px solid var(--gray-line);
+        background:var(--gray-bg);
+      }
+      table.users-table td{padding:14px 18px; font-size:13.5px; border-bottom:1px solid var(--gray-line); vertical-align:middle;}
+      table.users-table tr:last-child td{border-bottom:none;}
+      .u-name-cell{display:flex; align-items:center; gap:10px;}
+      .u-avatar-sm{width:32px;height:32px;border-radius:50%;background:var(--navy);color:var(--orange);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0;}
+      .u-name-text b{display:block; color:var(--navy); font-size:13.5px;}
+      .u-name-text span{color:var(--text-light); font-size:12px;}
+      .mini-progress{display:flex; align-items:center; gap:8px; min-width:120px;}
+      .mini-progress-bar{flex:1; height:7px; background:var(--gray-line); border-radius:6px; overflow:hidden;}
+      .mini-progress-bar i{display:block; height:100%; background:linear-gradient(90deg,var(--orange),var(--orange-dark)); border-radius:6px;}
+      .role-badge{display:inline-block; font-size:11px; font-weight:700; padding:4px 10px; border-radius:6px; background:var(--gray-bg); color:var(--navy);}
+      .table-actions{display:flex; gap:6px; flex-wrap:wrap;}
+      .add-user-topbtn{white-space:nowrap;}
+
     </style>
   </head>
   <body>
@@ -158,6 +179,10 @@
 
       <div class="nav-item active" data-view="overview">
         <span class="nav-icon">👤</span> Личный кабинет
+      </div>
+
+      <div class="nav-item" data-view="users" id="usersNavItem" style="display:none;">
+        <span class="nav-icon">👥</span> Пользователи
       </div>
 
       <div class="nav-divider"></div>
@@ -200,6 +225,26 @@
           </div>
         </div>
         <div class="modules-grid" id="overviewModulesGrid"></div>
+      </section>
+
+      <section class="view" id="view-users">
+        <div class="topbar" style="margin-bottom:20px;">
+          <h2 style="font-size:20px;color:var(--navy);font-weight:800;">Все пользователи</h2>
+          <button class="btn btn-primary btn-sm add-user-topbtn" id="openAddUserBtn">➕ Добавить пользователя</button>
+        </div>
+        <div class="users-table-wrap">
+          <table class="users-table">
+            <thead>
+              <tr>
+                <th>Сотрудник</th>
+                <th>Роль</th>
+                <th>Общий прогресс</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody"></tbody>
+          </table>
+        </div>
       </section>
 
       <section class="view module-view" id="view-module">
@@ -256,9 +301,54 @@
       </div>
     </div>
 
+    <!-- MODAL: add user -->
+    <div class="modal-overlay" id="modalAddUser">
+      <div class="modal-box">
+        <h3>Добавить пользователя</h3>
+        <div class="field-group"><label>ФИО</label><input type="text" id="newUserName" placeholder="Иванов Иван Иванович" /></div>
+        <div class="field-group"><label>Email (логин)</label><input type="email" id="newUserEmail" placeholder="i.ivanov@company.ru" /></div>
+        <div class="field-group"><label>Временный пароль</label><input type="text" id="newUserPassword" placeholder="минимум 6 символов" /></div>
+        <div class="field-group">
+          <label>Роль</label>
+          <select id="newUserRole">
+            <option value="Сотрудник">Сотрудник</option>
+            <option value="Наставник">Наставник</option>
+            <option value="Руководитель">Руководитель</option>
+            <option value="admin">Администратор</option>
+          </select>
+        </div>
+        <div id="addUserMsg" style="display:none;margin-bottom:14px;padding:10px 14px;border-radius:8px;font-size:13px;"></div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" onclick="closeModal('modalAddUser')">Отмена</button>
+          <button class="btn btn-primary" id="createUserBtn">Создать пользователя</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: edit user (name/role) -->
+    <div class="modal-overlay" id="modalEditUser">
+      <div class="modal-box">
+        <h3>Редактировать сотрудника</h3>
+        <div class="field-group"><label>ФИО</label><input type="text" id="editUserName" /></div>
+        <div class="field-group">
+          <label>Роль</label>
+          <select id="editUserRole">
+            <option value="Сотрудник">Сотрудник</option>
+            <option value="Наставник">Наставник</option>
+            <option value="Руководитель">Руководитель</option>
+            <option value="admin">Администратор</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" onclick="closeModal('modalEditUser')">Отмена</button>
+          <button class="btn btn-primary" id="saveEditUserBtn">Сохранить</button>
+        </div>
+      </div>
+    </div>
+
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
-      import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+      import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
       import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
       const firebaseConfig = {
@@ -273,6 +363,11 @@
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
       const db = getFirestore(app);
+
+      // Отдельный "вторичный" экземпляр Firebase — нужен, чтобы создание нового
+      // пользователя администратором не переключало текущую сессию входа на нового пользователя.
+      const secondaryApp = initializeApp(firebaseConfig, "Secondary");
+      const secondaryAuth = getAuth(secondaryApp);
 
       const ADMIN_EMAIL = "apisareva22@gmail.com";
 
@@ -355,6 +450,7 @@
         if (isAdmin) {
           document.getElementById('adminChip').style.display = 'flex';
           document.getElementById('addModuleBtn').style.display = 'flex';
+          document.getElementById('usersNavItem').style.display = 'flex';
         }
 
         await loadUserData();
@@ -454,6 +550,35 @@
         document.getElementById('saveTheoryBtn').addEventListener('click', saveTheory);
         document.getElementById('saveTestBtn').addEventListener('click', saveTest);
         document.getElementById('addQuestionBtn').addEventListener('click', () => addQuestionEditBlock());
+
+        const usersNav = document.getElementById('usersNavItem');
+        if (usersNav) {
+          usersNav.addEventListener('click', () => {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            usersNav.classList.add('active');
+            switchView('users');
+            document.getElementById('topbarTitle').textContent = 'Пользователи';
+            renderUsersTable();
+          });
+        }
+
+        const openAddUserBtn = document.getElementById('openAddUserBtn');
+        if (openAddUserBtn) {
+          openAddUserBtn.addEventListener('click', () => {
+            document.getElementById('newUserName').value = '';
+            document.getElementById('newUserEmail').value = '';
+            document.getElementById('newUserPassword').value = '';
+            document.getElementById('newUserRole').value = 'Сотрудник';
+            document.getElementById('addUserMsg').style.display = 'none';
+            openModal('modalAddUser');
+          });
+        }
+
+        const createUserBtn = document.getElementById('createUserBtn');
+        if (createUserBtn) createUserBtn.addEventListener('click', createNewUser);
+
+        const saveEditUserBtn = document.getElementById('saveEditUserBtn');
+        if (saveEditUserBtn) saveEditUserBtn.addEventListener('click', saveEditedUser);
       }
 
       function getModuleProgress(key) {
@@ -756,6 +881,152 @@
         document.getElementById('topbarTitle').textContent = 'Личный кабинет';
         document.querySelector('.nav-item[data-view="overview"]').classList.add('active');
         renderOverview();
+      }
+
+      // ============ ADMIN: USERS MANAGEMENT ============
+      let allUsersCache = {};
+      let editingUserEmail = null;
+
+      function calcOverallProgressForUser(uData) {
+        const keys = sortedModuleKeys();
+        if (keys.length === 0) return 0;
+        const prog = (uData && uData.progress) || {};
+        let total = 0;
+        keys.forEach((key) => {
+          const p = prog[key] || {};
+          const theoryDone = p.theoryViewed ? 1 : 0;
+          const testDone = p.testPassed ? 1 : 0;
+          total += Math.round(((theoryDone + testDone) / 2) * 100);
+        });
+        return Math.round(total / keys.length);
+      }
+
+      async function renderUsersTable() {
+        const tbody = document.getElementById('usersTableBody');
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-light);">Загрузка...</td></tr>';
+
+        const snap = await getDocs(collection(db, 'users'));
+        allUsersCache = {};
+        snap.forEach((d) => { allUsersCache[d.id] = d.data(); });
+
+        const emails = Object.keys(allUsersCache);
+        if (emails.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-light);">Пользователи пока не добавлены</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = '';
+        emails.forEach((email) => {
+          const u = allUsersCache[email];
+          const name = u.name || email;
+          const role = u.role || 'Сотрудник';
+          const pct = calcOverallProgressForUser(u);
+          const initials = name.split(' ').map(s => s[0]).join('').slice(0,2).toUpperCase();
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>
+              <div class="u-name-cell">
+                <div class="u-avatar-sm">${initials}</div>
+                <div class="u-name-text"><b>${name}</b><span>${email}</span></div>
+              </div>
+            </td>
+            <td><span class="role-badge">${role}</span></td>
+            <td>
+              <div class="mini-progress">
+                <div class="mini-progress-bar"><i style="width:${pct}%"></i></div>
+                <span style="font-size:12px;color:var(--text-light);white-space:nowrap;">${pct}%</span>
+              </div>
+            </td>
+            <td>
+              <div class="table-actions">
+                <button class="btn btn-secondary btn-sm" data-action="edit" data-email="${email}">✏️ Изменить</button>
+                <button class="btn btn-secondary btn-sm" data-action="reset" data-email="${email}">🔑 Сброс пароля</button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        tbody.querySelectorAll('button[data-action="edit"]').forEach((btn) => {
+          btn.addEventListener('click', () => openEditUserModal(btn.dataset.email));
+        });
+        tbody.querySelectorAll('button[data-action="reset"]').forEach((btn) => {
+          btn.addEventListener('click', () => resetUserPassword(btn.dataset.email));
+        });
+      }
+
+      async function createNewUser() {
+        const name = document.getElementById('newUserName').value.trim();
+        const email = document.getElementById('newUserEmail').value.trim();
+        const password = document.getElementById('newUserPassword').value.trim();
+        const role = document.getElementById('newUserRole').value;
+        const msgEl = document.getElementById('addUserMsg');
+        msgEl.style.display = 'none';
+
+        if (!name || !email || password.length < 6) {
+          msgEl.style.display = 'block';
+          msgEl.style.background = 'rgba(230,60,60,0.08)';
+          msgEl.style.color = '#c0362c';
+          msgEl.textContent = 'Заполните ФИО, email и пароль (минимум 6 символов).';
+          return;
+        }
+
+        try {
+          // Создаём через ВТОРИЧНЫЙ Firebase-экземпляр, чтобы не разлогинить админа
+          await createUserWithEmailAndPassword(secondaryAuth, email, password);
+          await signOut(secondaryAuth);
+
+          await setDoc(doc(db, 'users', email), {
+            name, role, progress: {}
+          });
+
+          msgEl.style.display = 'block';
+          msgEl.style.background = 'rgba(46,160,67,0.1)';
+          msgEl.style.color = '#1e7a34';
+          msgEl.textContent = 'Пользователь успешно создан!';
+
+          setTimeout(() => {
+            closeModal('modalAddUser');
+            renderUsersTable();
+          }, 900);
+        } catch (err) {
+          msgEl.style.display = 'block';
+          msgEl.style.background = 'rgba(230,60,60,0.08)';
+          msgEl.style.color = '#c0362c';
+          let text = 'Ошибка при создании пользователя.';
+          if (err.code === 'auth/email-already-in-use') text = 'Пользователь с таким email уже существует.';
+          if (err.code === 'auth/invalid-email') text = 'Некорректный email.';
+          if (err.code === 'auth/weak-password') text = 'Пароль слишком простой (минимум 6 символов).';
+          msgEl.textContent = text;
+        }
+      }
+
+      function openEditUserModal(email) {
+        editingUserEmail = email;
+        const u = allUsersCache[email] || {};
+        document.getElementById('editUserName').value = u.name || '';
+        document.getElementById('editUserRole').value = u.role || 'Сотрудник';
+        openModal('modalEditUser');
+      }
+
+      async function saveEditedUser() {
+        const name = document.getElementById('editUserName').value.trim();
+        const role = document.getElementById('editUserRole').value;
+        if (!editingUserEmail) return;
+        await setDoc(doc(db, 'users', editingUserEmail), { name, role }, { merge: true });
+        closeModal('modalEditUser');
+        renderUsersTable();
+      }
+
+      async function resetUserPassword(email) {
+        if (!confirm(`Отправить ${email} письмо со ссылкой для смены пароля?`)) return;
+        try {
+          await sendPasswordResetEmail(secondaryAuth, email);
+          alert('Письмо со ссылкой для смены пароля отправлено на ' + email);
+        } catch (err) {
+          alert('Не удалось отправить письмо: ' + (err.message || 'неизвестная ошибка'));
+        }
       }
     </script>
   </body>
