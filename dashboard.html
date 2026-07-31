@@ -586,10 +586,6 @@
         document.getElementById('overviewRole').textContent = userData.role || 'Сотрудник';
       }
 
-      // ============ МИГРАЦИЯ СТАРОГО ФОРМАТА (theory+test) В НОВЫЙ (steps[]) ============
-      // Старый формат: { theory:{heading,text,videoUrl}, test:{passScore,questions} }
-      // Новый формат:  { steps:[ {id,type:'theory',title,html}, {id,type:'test',title,passScore,questions} ] }
-      // Ничего не удаляется — весь имеющийся контент переносится 1:1 в новый формат.
       function migrateModuleToSteps(mod) {
         if (mod.steps && Array.isArray(mod.steps)) return mod;
         const steps = [];
