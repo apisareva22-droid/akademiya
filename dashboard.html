@@ -82,10 +82,7 @@
       .stage-top-row{display:flex; justify-content:space-between; align-items:flex-start; gap:12px;}
       .stage-tag{display:inline-block; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; color:var(--orange-dark); background:rgba(255,129,0,0.1); padding:4px 10px; border-radius:6px; margin-bottom:12px;}
       .stage-card h3{font-size:17px; color:var(--navy); font-weight:700; margin-bottom:10px;}
-      .stage-card p{font-size:14px; color:var(--text); margin-bottom:14px; line-height:1.7;}
-      .rich-content{font-size:14px; color:var(--text); line-height:1.75; margin-bottom:14px;}
-      .rich-content p{margin-bottom:10px;}
-      .rich-content img{max-width:100%; border-radius:10px; margin:12px 0; display:block;}
+      .stage-card p{font-size:14px; color:var(--text); margin-bottom:14px; line-height:1.7; white-space:pre-line;}
       .video-wrap{position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:12px; margin-bottom:16px; background:#000;}
       .video-wrap iframe{position:absolute; top:0; left:0; width:100%; height:100%; border:0;}
       .btn{display:inline-flex; align-items:center; gap:8px; padding:12px 22px; border-radius:10px; font-weight:700; font-size:14px; border:none; cursor:pointer; transition:all .2s;}
@@ -104,16 +101,6 @@
         cursor:pointer; font-size:15px; flex-shrink:0; transition:all .15s;
       }
       .edit-pencil:hover{background:var(--orange); color:#fff; border-color:var(--orange);}
-      .stage-admin-actions{display:flex; gap:8px; flex-shrink:0;}
-      .step-order-btns{display:flex; flex-direction:column; gap:2px;}
-      .step-order-btns button{
-        width:34px; height:16px; border:1px solid var(--gray-line); background:var(--gray-bg); color:var(--navy);
-        cursor:pointer; font-size:10px; line-height:1; display:flex; align-items:center; justify-content:center;
-      }
-      .step-order-btns button:first-child{border-radius:6px 6px 0 0;}
-      .step-order-btns button:last-child{border-radius:0 0 6px 6px;}
-      .step-order-btns button:hover{background:var(--orange); color:#fff;}
-      .add-step-zone{text-align:center; padding:22px; border:2px dashed var(--gray-line); border-radius:var(--radius); margin-top:6px;}
 
       .question{margin-bottom:18px; padding-bottom:18px; border-bottom:1px solid var(--gray-line);}
       .question:last-of-type{border-bottom:none;}
@@ -138,7 +125,6 @@
         background:var(--white); border-radius:16px; width:100%; max-width:640px;
         padding:30px; box-shadow:0 20px 60px rgba(0,0,0,0.3); margin-bottom:40px;
       }
-      .modal-box.wide{max-width:760px;}
       .modal-box h3{font-size:19px; color:var(--navy); font-weight:800; margin-bottom:18px;}
       .field-group{margin-bottom:16px;}
       .field-group label{display:block; font-size:13px; font-weight:700; color:var(--navy); margin-bottom:6px;}
@@ -148,56 +134,22 @@
       }
       .field-group textarea{min-height:110px; resize:vertical;}
       .field-group input:focus, .field-group textarea:focus{outline:none; border-color:var(--orange); background:#fff;}
-      .modal-actions{display:flex; gap:10px; justify-content:flex-end; margin-top:22px; flex-wrap:wrap;}
+      .modal-actions{display:flex; gap:10px; justify-content:flex-end; margin-top:22px;}
       .q-edit-block{border:1px solid var(--gray-line); border-radius:10px; padding:16px; margin-bottom:14px; position:relative;}
       .q-edit-block .remove-q{position:absolute; top:10px; right:10px; background:none; border:none; color:#c0362c; cursor:pointer; font-size:13px; font-weight:700;}
       .opt-row{display:flex; align-items:center; gap:8px; margin-bottom:8px;}
       .opt-row input[type="text"]{flex:1;}
       .opt-row input[type="radio"]{flex-shrink:0; width:18px; height:18px;}
 
-      /* Rich text editor */
-      .rte-toolbar{
-        display:flex; flex-wrap:wrap; gap:6px; padding:8px; background:var(--gray-bg);
-        border:1.5px solid var(--gray-line); border-bottom:none; border-radius:9px 9px 0 0;
-        align-items:center;
+      @media(max-width:860px){
+        body{flex-direction:column;}
+        .sidebar{width:100%; height:auto; position:relative; flex-direction:row; overflow-x:auto; padding:14px;}
+        .sidebar-logo{display:none;}
+        .nav-item{white-space:nowrap; border-left:none; border-bottom:3px solid transparent;}
+        .nav-item.active{border-left:none; border-bottom-color:var(--orange);}
+        .logout-item{margin-top:0;}
+        .main{padding:24px;}
       }
-      .rte-btn{
-        width:32px; height:32px; border-radius:6px; border:1px solid transparent; background:transparent;
-        color:var(--navy); font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center;
-        transition:all .12s;
-      }
-      .rte-btn:hover{background:#fff; border-color:var(--gray-line);}
-      .rte-sep{width:1px; height:22px; background:var(--gray-line); margin:0 4px;}
-      .rte-color-wrap{position:relative;}
-      .rte-palette{
-        display:none; position:absolute; top:36px; left:0; background:#fff; border:1px solid var(--gray-line);
-        border-radius:10px; padding:10px; box-shadow:0 8px 24px rgba(0,0,0,0.15); z-index:10; width:172px;
-      }
-      .rte-palette.show{display:block;}
-      .rte-swatches{display:grid; grid-template-columns:repeat(7,1fr); gap:5px; margin-bottom:8px;}
-      .rte-swatch{width:18px;height:18px;border-radius:4px;cursor:pointer;border:1px solid rgba(0,0,0,0.1);}
-      .rte-editable{
-        min-height:180px; max-height:420px; overflow-y:auto; padding:14px; border:1.5px solid var(--gray-line);
-        border-radius:0 0 9px 9px; font-size:14px; line-height:1.7; background:#fff;
-      }
-      .rte-editable:focus{outline:none; border-color:var(--orange);}
-      .rte-editable img{max-width:100%; border-radius:8px; margin:10px 0;}
-      .video-position-row{display:flex; gap:8px; align-items:center; margin-bottom:8px; background:var(--gray-bg); padding:8px 10px; border-radius:8px;}
-      .video-position-row input[type="text"]{flex:1; padding:9px 10px; border-radius:7px; border:1.5px solid var(--gray-line); font-size:13px; background:#fff;}
-      .video-position-row select{width:110px; padding:9px 6px; border-radius:7px; border:1.5px solid var(--gray-line); font-size:12.5px; background:#fff;}
-      .video-position-row .rm-video{background:none; border:none; color:#c0362c; cursor:pointer; font-size:15px; flex-shrink:0;}
-      .upload-status{font-size:12px; color:var(--text-light); margin-top:6px; display:none;}
-      .upload-status.show{display:block;}
-
-      .type-choice-row{display:flex; gap:14px; margin-top:6px;}
-      .type-choice{
-        flex:1; border:1.5px solid var(--gray-line); border-radius:12px; padding:20px; text-align:center;
-        cursor:pointer; transition:all .15s;
-      }
-      .type-choice:hover{border-color:var(--orange); background:rgba(255,129,0,0.05);}
-      .type-choice .tc-icon{font-size:26px; margin-bottom:8px;}
-      .type-choice b{display:block; font-size:14px; color:var(--navy); margin-bottom:4px;}
-      .type-choice span{font-size:12px; color:var(--text-light);}
 
       .users-table-wrap{background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow); overflow-x:auto;}
       table.users-table{width:100%; border-collapse:collapse; min-width:760px;}
@@ -235,15 +187,26 @@
       .mp-stage.done .stage-icon{background:rgba(46,160,67,0.15); color:#1e7a34;}
       .mp-stage.pending .stage-icon{background:var(--gray-line); color:var(--text-light);}
 
-      @media(max-width:860px){
-        body{flex-direction:column;}
-        .sidebar{width:100%; height:auto; position:relative; flex-direction:row; overflow-x:auto; padding:14px;}
-        .sidebar-logo{display:none;}
-        .nav-item{white-space:nowrap; border-left:none; border-bottom:3px solid transparent;}
-        .nav-item.active{border-left:none; border-bottom-color:var(--orange);}
-        .logout-item{margin-top:0;}
-        .main{padding:24px;}
-      }
+    
+      /* ===== STEP-BASED EDITOR STYLES ===== */
+      .step-content-display{line-height:1.75; font-size:14px; color:var(--text);}
+      .step-content-display p{margin-bottom:10px;}
+      .step-content-display h3{color:var(--navy); font-size:16px; margin:16px 0 8px;}
+      .step-content-display ul, .step-content-display ol{margin:8px 0 12px 22px;}
+      .step-content-display img{max-width:100%; border-radius:10px; margin:12px 0; display:block;}
+      .step-content-display .video-embed-wrap{position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:12px; margin:14px 0; background:#000;}
+      .step-content-display .video-embed-wrap iframe{position:absolute; top:0; left:0; width:100%; height:100%; border:0;}
+      .editor-toolbar{display:flex; gap:6px; flex-wrap:wrap; background:var(--gray-bg); border:1.5px solid var(--gray-line); border-bottom:none; padding:8px; border-radius:9px 9px 0 0;}
+      .toolbar-btn{min-width:34px; height:34px; padding:0 8px; border:1px solid var(--gray-line); background:#fff; border-radius:6px; cursor:pointer; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center; transition:all .15s; color:var(--navy);}
+      .toolbar-btn:hover{background:var(--orange); color:#fff; border-color:var(--orange);}
+      #stepContentEditor{border:1.5px solid var(--gray-line); border-top:none; border-radius:0 0 9px 9px; min-height:240px; padding:16px; background:#fff; outline:none; line-height:1.6; font-size:14px;}
+      #stepContentEditor:focus{border-color:var(--orange);}
+      #stepContentEditor img{max-width:100%; border-radius:8px; margin:10px 0; cursor:pointer;}
+      #stepContentEditor .video-embed-wrap{cursor:default;}
+      .step-header-actions{display:flex; gap:8px; flex-shrink:0; flex-wrap:wrap;}
+      .step-type-select-row{display:flex; gap:14px; margin-bottom:16px;}
+      .step-type-option{flex:1; border:1.5px solid var(--gray-line); border-radius:10px; padding:14px; text-align:center; cursor:pointer; font-weight:700; font-size:13.5px; color:var(--text-light); transition:all .15s;}
+      .step-type-option.selected{border-color:var(--orange); background:rgba(255,129,0,0.08); color:var(--orange-dark);}
     </style>
   </head>
   <body>
@@ -308,7 +271,12 @@
         <div class="users-table-wrap">
           <table class="users-table">
             <thead>
-              <tr><th>Сотрудник</th><th>Роль</th><th>Общий прогресс</th><th>Действия</th></tr>
+              <tr>
+                <th>Сотрудник</th>
+                <th>Роль</th>
+                <th>Общий прогресс</th>
+                <th>Действия</th>
+              </tr>
             </thead>
             <tbody id="usersTableBody"></tbody>
           </table>
@@ -332,6 +300,7 @@
             <div class="overall-progress-bar"><i id="udOverallBar" style="width:0%"></i></div>
           </div>
         </div>
+
         <h3 style="font-size:17px;color:var(--navy);font-weight:800;margin-bottom:14px;">Прогресс по оборудованию</h3>
         <div id="udModulesList"></div>
       </section>
@@ -342,106 +311,91 @@
             <h2 id="moduleTitle">—</h2>
             <p class="module-sub" id="moduleSub">—</p>
           </div>
-          <button class="edit-pencil" id="editModuleInfoBtn" style="display:none;" title="Редактировать название">✏️</button>
+          <div class="step-header-actions">
+            <button class="btn btn-secondary btn-sm" id="addStepBtn" style="display:none;">➕ Добавить шаг</button>
+            <button class="edit-pencil" id="editModuleInfoBtn" style="display:none;" title="Редактировать название">✏️</button>
+          </div>
         </div>
         <div id="moduleStages"></div>
-        <div class="add-step-zone" id="addStepZone" style="display:none;">
-          <p style="color:var(--text-light);font-size:13.5px;margin-bottom:12px;">Добавьте следующий шаг обучения</p>
-          <button class="btn btn-primary btn-sm" id="addStepBtn">➕ Добавить шаг</button>
-        </div>
       </section>
     </main>
 
-    <!-- MODAL: choose step type -->
-    <div class="modal-overlay" id="modalStepType">
+    <!-- MODAL: add new step (choose type + title) -->
+    <div class="modal-overlay" id="modalAddStep">
       <div class="modal-box">
-        <h3>Какой шаг добавить?</h3>
-        <div class="type-choice-row">
-          <div class="type-choice" id="chooseTheoryBtn">
-            <div class="tc-icon">📘</div><b>Теория</b><span>Текст, видео, изображения</span>
-          </div>
-          <div class="type-choice" id="chooseTestBtn">
-            <div class="tc-icon">📝</div><b>Тест</b><span>Вопросы с вариантами ответов</span>
-          </div>
+        <h3>Добавить новый шаг</h3>
+        <div class="step-type-select-row">
+          <div class="step-type-option selected" data-type="theory" id="stepTypeTheoryOpt">📖 Теория</div>
+          <div class="step-type-option" data-type="test" id="stepTypeTestOpt">📝 Тест</div>
         </div>
-        <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal('modalStepType')">Отмена</button></div>
-      </div>
-    </div>
-
-    <!-- MODAL: edit theory (rich) -->
-    <div class="modal-overlay" id="modalTheory">
-      <div class="modal-box wide">
-        <h3>Редактировать шаг теории</h3>
-        <div class="field-group"><label>Заголовок</label><input type="text" id="theoryHeadingInput" /></div>
-
-        <div class="field-group">
-          <label>Видео до текста</label>
-          <div id="videosBeforeList"></div>
-          <button type="button" class="btn btn-secondary btn-sm" id="addVideoBeforeBtn">+ Добавить видео до текста</button>
-        </div>
-
-        <div class="field-group">
-          <label>Текст и изображения</label>
-          <div class="rte-toolbar">
-            <button type="button" class="rte-btn" data-cmd="bold" title="Жирный"><b>Ж</b></button>
-            <button type="button" class="rte-btn" data-cmd="italic" title="Курсив"><i>К</i></button>
-            <button type="button" class="rte-btn" data-cmd="underline" title="Подчёркнутый"><u>Ч</u></button>
-            <button type="button" class="rte-btn" data-cmd="strikeThrough" title="Зачёркнутый"><s>З</s></button>
-            <div class="rte-sep"></div>
-            <div class="rte-color-wrap">
-              <button type="button" class="rte-btn" id="foreColorBtn" title="Цвет текста">А</button>
-              <div class="rte-palette" id="foreColorPalette">
-                <div class="rte-swatches" id="foreColorSwatches"></div>
-                <input type="color" id="foreColorPicker" style="width:100%;" />
-              </div>
-            </div>
-            <div class="rte-color-wrap">
-              <button type="button" class="rte-btn" id="hiliteColorBtn" title="Выделение фоном" style="background:#fff59d;">▨</button>
-              <div class="rte-palette" id="hiliteColorPalette">
-                <div class="rte-swatches" id="hiliteColorSwatches"></div>
-                <input type="color" id="hiliteColorPicker" style="width:100%;" />
-              </div>
-            </div>
-            <div class="rte-sep"></div>
-            <button type="button" class="rte-btn" id="insertImageBtn" title="Вставить изображение">🖼️</button>
-            <button type="button" class="rte-btn" id="clearFormatBtn" title="Очистить форматирование">✕</button>
-            <input type="file" id="imageFileInput" accept="image/*" style="display:none;" />
-          </div>
-          <div class="rte-editable" id="theoryContentEditable" contenteditable="true"></div>
-          <div class="upload-status" id="uploadStatus">Загрузка изображения...</div>
-        </div>
-
-        <div class="field-group">
-          <label>Видео после текста</label>
-          <div id="videosAfterList"></div>
-          <button type="button" class="btn btn-secondary btn-sm" id="addVideoAfterBtn">+ Добавить видео после текста</button>
-        </div>
-
+        <div class="field-group"><label>Название шага</label><input type="text" id="newStepTitleInput" placeholder="Например: Введение в тему" /></div>
         <div class="modal-actions">
-          <button class="btn btn-secondary" onclick="closeModal('modalTheory')">Отмена</button>
-          <button class="btn btn-primary" id="saveTheoryBtn">Сохранить</button>
+          <button class="btn btn-secondary" onclick="closeModal('modalAddStep')">Отмена</button>
+          <button class="btn btn-primary" id="confirmAddStepBtn">Создать шаг</button>
         </div>
       </div>
     </div>
 
-    <!-- MODAL: edit test -->
+    <!-- MODAL: edit theory-type step (rich text editor with inline video placement) -->
+    <div class="modal-overlay" id="modalStepEditor">
+      <div class="modal-box" style="max-width:760px;">
+        <h3 id="stepEditorTitleLabel">Редактировать шаг</h3>
+        <div class="field-group"><label>Название шага</label><input type="text" id="stepTitleInput" /></div>
+        <div class="field-group">
+          <label>Содержимое</label>
+          <div class="editor-toolbar">
+            <button type="button" class="toolbar-btn" data-cmd="bold" title="Жирный"><b>Ж</b></button>
+            <button type="button" class="toolbar-btn" data-cmd="italic" title="Курсив"><i>К</i></button>
+            <button type="button" class="toolbar-btn" data-cmd="insertUnorderedList" title="Список">•≡</button>
+            <button type="button" class="toolbar-btn" data-cmd="insertOrderedList" title="Нумерованный список">1.≡</button>
+            <button type="button" class="toolbar-btn" data-cmd="formatBlock" data-val="H3" title="Заголовок">H</button>
+            <button type="button" class="toolbar-btn" data-cmd="formatBlock" data-val="P" title="Обычный текст">¶</button>
+            <button type="button" class="toolbar-btn" id="insertImageBtn" title="Вставить картинку">🖼️</button>
+            <button type="button" class="toolbar-btn" id="insertVideoBtn" title="Вставить видео в это место">🎬</button>
+          </div>
+          <div id="stepContentEditor" contenteditable="true"></div>
+          <input type="file" id="imageFileInput" accept="image/*" style="display:none;" />
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-danger" id="deleteStepBtn">Удалить шаг</button>
+          <button class="btn btn-secondary" onclick="closeModal('modalStepEditor')">Отмена</button>
+          <button class="btn btn-primary" id="saveStepEditorBtn">Сохранить</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: insert video url (used inside step editor) -->
+    <div class="modal-overlay" id="modalInsertVideo">
+      <div class="modal-box">
+        <h3>Вставить видео</h3>
+        <div class="field-group"><label>Ссылка на видео (YouTube или Rutube)</label><input type="text" id="insertVideoUrlInput" placeholder="https://..." /></div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" onclick="closeModal('modalInsertVideo')">Отмена</button>
+          <button class="btn btn-primary" id="confirmInsertVideoBtn">Вставить</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: edit test-type step -->
     <div class="modal-overlay" id="modalTest">
-      <div class="modal-box wide">
-        <h3>Редактировать тест</h3>
+      <div class="modal-box" style="max-width:720px;">
+        <h3 id="testEditorTitleLabel">Редактировать тест</h3>
+        <div class="field-group"><label>Название шага</label><input type="text" id="testStepTitleInput" /></div>
         <div class="field-group"><label>Проходной балл (%)</label><input type="number" id="testPassScoreInput" min="1" max="100" /></div>
         <div id="questionsEditList"></div>
-        <button type="button" class="btn btn-secondary btn-sm" id="addQuestionBtn">+ Добавить вопрос</button>
+        <button class="btn btn-secondary btn-sm" id="addQuestionBtn">+ Добавить вопрос</button>
         <div class="modal-actions">
+          <button class="btn btn-danger" id="deleteTestStepBtn">Удалить шаг</button>
           <button class="btn btn-secondary" onclick="closeModal('modalTest')">Отмена</button>
           <button class="btn btn-primary" id="saveTestBtn">Сохранить</button>
         </div>
       </div>
     </div>
 
-    <!-- MODAL: module info -->
+    <!-- MODAL: module info (title/icon) -->
     <div class="modal-overlay" id="modalModuleInfo">
       <div class="modal-box">
-        <h3>Редактировать оборудование</h3>
+        <h3 id="modalModuleInfoTitle">Редактировать оборудование</h3>
         <div class="field-group"><label>Иконка (emoji)</label><input type="text" id="moduleIconInput" /></div>
         <div class="field-group"><label>Название</label><input type="text" id="moduleTitleInput" /></div>
         <div class="modal-actions">
@@ -476,7 +430,7 @@
       </div>
     </div>
 
-    <!-- MODAL: edit user -->
+    <!-- MODAL: edit user (name/role) -->
     <div class="modal-overlay" id="modalEditUser">
       <div class="modal-box">
         <h3>Редактировать сотрудника</h3>
@@ -501,7 +455,6 @@
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
       import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
       import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
-      import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-storage.js";
 
       const firebaseConfig = {
         apiKey: "AIzaSyD4BRDmQtttfw4xKSyhYT10Q3mXJmB9nkQ",
@@ -515,90 +468,85 @@
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
       const db = getFirestore(app);
-      const storage = getStorage(app);
 
+      // Отдельный "вторичный" экземпляр Firebase — нужен, чтобы создание нового
+      // пользователя администратором не переключало текущую сессию входа на нового пользователя.
       const secondaryApp = initializeApp(firebaseConfig, "Secondary");
       const secondaryAuth = getAuth(secondaryApp);
 
       const ADMIN_EMAIL = "apisareva22@gmail.com";
-      const PALETTE_COLORS = ["#000000","#ffffff","#ff8100","#cc6700","#2b2d33","#c0362c","#1e7a34","#1a56db","#8b5cf6","#f59e0b","#ec4899","#0891b2","#f4f5f7","#94a3b8"];
 
+      // ===================== СТАРТОВЫЙ КОНТЕНТ (загружается один раз при первом запуске) =====================
       const DEFAULT_CONTENT = {
         vakuum: {
-          title: "Вакуумный упаковщик", icon: "🧊", order: 1,
-          stages: [
-            {
-              id: "st_theory1", type: "theory",
-              heading: "Что такое вакуумный упаковщик",
-              videosBefore: [{ url: "https://rutube.ru/video/6e011a077ee1823b1e0590667c34636f/" }],
-              videosAfter: [],
-              contentHtml: "<p>Вакуумный упаковщик — устройство, удаляющее воздух из упаковки с продуктом и герметично запаивающее её. Это увеличивает срок годности, сохраняет свежесть, вкус и аромат, предотвращает развитие бактерий.</p><p><b>Типы:</b> бытовые (ручные) — для дома; полупрофессиональные — для小 магазинов и кафе; профессиональные (камерные) — промышленное использование; бескамерные (аспирационные) — компактны; проточные (автоматические) — для линии.</p><p><b>Важные вопросы клиенту:</b> какой продукт упаковывается, в каком виде (охлажденный/замороженный/свежий), тип упаковки, срок хранения, нужная производительность, бюджет, напряжение сети (220В или 380В).</p>"
-            },
-            {
-              id: "st_test1", type: "test", passScore: 80,
-              questions: [
-                { q: "Для чего нужен вакуумный упаковщик?", options: ["Для нарезки продукта", "Для удаления воздуха и герметичной запайки упаковки", "Для заморозки продукта", "Для маркировки товара"], correct: 1 },
-                { q: "Какой тип упаковщика подходит для промышленного использования с наивысшим уровнем вакуума?", options: ["Бытовой (ручной)", "Бескамерный", "Профессиональный (камерный)", "Проточный (автоматический)"], correct: 2 },
-                { q: "Что делает «красный» вакуумный насос особенным?", options: ["Работает без электричества", "Используется при газонаполнении с высокой концентрацией кислорода", "Быстрее откачивает воздух в 2 раза", "Не требует обслуживания"], correct: 1 },
-                { q: "Какой вопрос обязательно нужно задать клиенту?", options: ["Любимый цвет упаковки", "Какой продукт и в каком виде будет упаковываться", "Название компании", "Количество сотрудников"], correct: 1 },
-                { q: "Какое напряжение сети важно уточнить у клиента?", options: ["Только 220В", "Только 380В", "220В или 380В — уточнять обязательно", "Не имеет значения"], correct: 2 }
-              ]
-            }
-          ]
+          title: "Вакуумный упаковщик",
+          icon: "🧊",
+          order: 1,
+          theory: {
+            heading: "Что такое вакуумный упаковщик",
+            text: "Вакуумный упаковщик — устройство, удаляющее воздух из упаковки с продуктом и герметично запаивающее её. Это увеличивает срок годности, сохраняет свежесть, вкус и аромат, предотвращает развитие бактерий.\n\nТипы: бытовые (ручные) — для дома, небольшая мощность; полупрофессиональные — для小 магазинов и кафе; профессиональные (камерные) — промышленное использование, высокий уровень вакуума; бескамерные (аспирационные) — компактны, менее эффективны; проточные (автоматические) — интегрируются в производственную линию.\n\nВажные вопросы клиенту: какой продукт упаковывается, в каком виде (охлажденный/замороженный/свежий), какой тип упаковки, срок хранения, нужная производительность, бюджет, сроки поставки, напряжение сети (220В или 380В).",
+            videoUrl: "https://rutube.ru/video/6e011a077ee1823b1e0590667c34636f/"
+          },
+          test: {
+            passScore: 80,
+            questions: [
+              { q: "Для чего нужен вакуумный упаковщик?", options: ["Для нарезки продукта", "Для удаления воздуха и герметичной запайки упаковки", "Для заморозки продукта", "Для маркировки товара"], correct: 1 },
+              { q: "Какой тип вакуумного упаковщика подходит для промышленного использования с наивысшим уровнем вакуума?", options: ["Бытовой (ручной)", "Бескамерный", "Профессиональный (камерный)", "Проточный (автоматический)"], correct: 2 },
+              { q: "Что делает «красный» вакуумный насос особенным?", options: ["Работает без электричества", "Используется при газонаполнении с высокой концентрацией кислорода", "Быстрее откачивает воздух в 2 раза", "Не требует обслуживания"], correct: 1 },
+              { q: "Какой вопрос обязательно нужно задать клиенту при подборе оборудования?", options: ["Любимый цвет упаковки", "Какой продукт будет упаковываться и в каком виде", "Название компании", "Количество сотрудников"], correct: 1 },
+              { q: "Какое напряжение сети важно уточнить у клиента?", options: ["Только 220В", "Только 380В", "220В или 380В — уточнять обязательно", "Напряжение не имеет значения"], correct: 2 }
+            ]
+          }
         },
         zapaika: {
-          title: "Запайщик лотков", icon: "📦", order: 2,
-          stages: [
-            {
-              id: "st_theory1", type: "theory",
-              heading: "Что такое запайщик лотков",
-              videosBefore: [{ url: "https://rutube.ru/video/5cd18701003afeb23c85d2810dea4ff6/" }],
-              videosAfter: [],
-              contentHtml: "<p>Запайщик лотков — оборудование для герметичной упаковки продуктов в пластиковые лотки. Приобретается пищевыми производствами для упаковки готовой и охлажденной продукции.</p><p><b>Типы:</b> ручной, полуавтоматический, автоматический, с модифицированной газовой средой MAP, с вакуумной упаковкой.</p><p><b>Важно:</b> у крупных ритейлов часто жёсткое требование — газовая среда (MAP), если продукт не заморожен.</p><p><b>Пять золотых вопросов клиенту:</b> что упаковываем? какой лоток (материал, размер)? сколько штук в час нужно закрывать? как долго должен храниться продукт? нужна ли аккуратная обрезка плёнки по контуру?</p>"
-            },
-            {
-              id: "st_test1", type: "test", passScore: 80,
-              questions: [
-                { q: "Основная функция запайщика лотков?", options: ["Мойка лотков", "Герметичная запайка лотков плёнкой", "Печать этикеток", "Взвешивание продукта"], correct: 1 },
-                { q: "Что означает MAP?", options: ["Марка производителя", "Модифицированная газовая среда для увеличения срока годности", "Максимальная автоматическая программа", "Материал плёнки"], correct: 1 },
-                { q: "Какой из 'золотых вопросов' клиенту самый первый?", options: ["Какой бюджет?", "Что упаковываем и в каком виде продукт?", "Какой цвет корпуса?", "Где склад?"], correct: 1 },
-                { q: "Когда ритейлы требуют MAP?", options: ["Всегда", "Только для сладостей", "Если продукт не заморожен", "Никогда"], correct: 2 },
-                { q: "Что уточнить про лоток?", options: ["Материал и размер", "Цвет упаковки", "Название на этикетке", "Логотип"], correct: 0 }
-              ]
-            }
-          ]
+          title: "Запайщик лотков",
+          icon: "📦",
+          order: 2,
+          theory: {
+            heading: "Что такое запайщик лотков",
+            text: "Запайщик лотков — оборудование, обеспечивающее герметичную упаковку продуктов в пластиковые лотки. В первую очередь его приобретают пищевые производства для упаковки готовой и охлажденной продукции.\n\nТипы: ручной (недорого, компактно, для малых объемов), полуавтоматический (выше производительность, меньше усилий оператора), автоматический (максимальная производительность, интеграция в линию), с модифицированной газовой средой MAP (увеличивает срок годности за счет замены воздуха на смесь газов CO2/N2/O2), с вакуумной упаковкой (максимальное увеличение срока годности).\n\nВажно: у крупных ритейлов часто жесткое требование — газовая среда (MAP), если продукт не заморожен.\n\nДополнительные функции: автообрезка пленки, печать даты и номера партии, фотоэлемент для позиционирования печати, работа с разными формами лотков (нужна смена оснастки/матрицы), система контроля качества шва.\n\n«Пять золотых вопросов» клиенту: что упаковываем (продукт, состояние — свежий/замороженный)? какой лоток (материал PP/PET/алюминий, размер)? сколько штук в час/день нужно закрывать? как долго должен храниться продукт (нужен ли газ МГС)? нужна ли аккуратная обрезка пленки по контуру?",
+            videoUrl: "https://rutube.ru/video/5cd18701003afeb23c85d2810dea4ff6/"
+          },
+          test: {
+            passScore: 80,
+            questions: [
+              { q: "Основная функция запайщика лотков?", options: ["Мойка лотков", "Герметичная запайка лотков плёнкой", "Печать этикеток", "Взвешивание продукта"], correct: 1 },
+              { q: "Что означает MAP в контексте запайщиков лотков?", options: ["Марка производителя", "Модифицированная газовая среда для увеличения срока годности", "Максимальная автоматическая программа", "Материал алюминиевой плёнки"], correct: 1 },
+              { q: "Какой из 'пяти золотых вопросов' клиенту самый первый?", options: ["Какой бюджет?", "Что упаковываем и в каком виде продукт?", "Какой цвет корпуса нужен?", "Где находится склад?"], correct: 1 },
+              { q: "Когда крупные ритейлы жестко требуют наличие газовой среды (MAP)?", options: ["Всегда, без исключений", "Только для сладостей", "Если продукт не заморожен", "Никогда не требуют"], correct: 2 },
+              { q: "Что нужно уточнить про сам лоток при подборе?", options: ["Материал и размер лотка", "Цвет упаковки", "Название продукта на этикетке", "Логотип компании"], correct: 0 }
+            ]
+          }
         },
         pelmeni: {
-          title: "Пельменные аппараты", icon: "🥟", order: 3,
-          stages: [
-            {
-              id: "st_theory1", type: "theory",
-              heading: "Что такое пельменный аппарат",
-              videosBefore: [{ url: "https://rutube.ru/video/35c54374315bfd2fed02feb89ac36130/" }],
-              videosAfter: [],
-              contentHtml: "<p>Пельменные аппараты производят полуфабрикаты: пельмени, равиоли, клёцки, вареники.</p><p><b>Принцип работы:</b> тесто раскатывается через систему валов, шнек подаёт фарш в узел формовки, штампы вырезают и запечатывают изделие.</p><p><b>Ценовые сегменты:</b> эконом — до 200 000 ₽; средний — около 500 000 ₽; дорогой российский — от 1,7 млн ₽.</p><p><b>Вопросы клиенту:</b> настольный/напольный? какая начинка? форма пельменя? граммовка? нужна модернизация?</p>"
-            },
-            {
-              id: "st_test1", type: "test", passScore: 80,
-              questions: [
-                { q: "Что делает пельменный аппарат?", options: ["Варит пельмени", "Автоматизирует лепку изделий из теста с начинкой", "Замораживает продукцию", "Упаковывает готовые пельмени"], correct: 1 },
-                { q: "Какая серия обычно напольная с высокой производительностью?", options: ["60-я серия", "От 120-й серии и выше", "Только 100-я", "Все настольные"], correct: 1 },
-                { q: "Сколько стоит 'средний' сегмент?", options: ["До 200 000 ₽", "Около 500 000 ₽", "От 1,7 млн ₽", "Более 5 млн ₽"], correct: 1 },
-                { q: "Какие формы пельменя уточнить у клиента?", options: ["Только круглая", "Полумесяц, круг, сатурн, 6-гранка", "Только квадратная", "Не важно"], correct: 1 },
-                { q: "Когда модернизация не обязательна?", options: ["Один тип пельменей с одной начинкой", "Никогда не нужна", "Всегда обязательна", "Только для настольных"], correct: 0 }
-              ]
-            }
-          ]
+          title: "Пельменные аппараты",
+          icon: "🥟",
+          order: 3,
+          theory: {
+            heading: "Что такое пельменный аппарат",
+            text: "Пельменные аппараты предназначены для производства полуфабрикатов: пельмени, равиоли, клёцки, мини-пельмени, вареники.\n\nПринцип работы: используется готовое однородное эластичное тесто с заданной консистенцией; аппарат раскатывает тесто через систему валов в тонкую равномерную ленту; шнековый механизм точно подает фарш из бункера в узел формовки с регулировкой объема подачи; две ленты теста смыкаются, а вращающиеся штампы-формы вырезают пельмень и запечатывают его края.\n\nТипы: автоматические, полуавтоматические и ручные; напольные (высокая производительность, от 120-й серии и выше) и настольные (60-я серия).\n\nЦеновые сегменты: эконом — до 200 000 ₽ (заводской Китай, менее точные настройки, но выполняет задачу); средний — около 500 000 ₽ (модернизированный аппарат, оптимальное соотношение цена/качество, точные настройки); дорогой российский — от 1,7 млн ₽ (максимальное качество продукта и высокая производительность).\n\nВажно: без модернизации аппарат придется перестраивать под каждую новую начинку; если у клиента один тип пельменей — модернизация не обязательна.\n\nСпецифичные вопросы клиенту: аппарат настольный или напольный? какая продукция (только пельмени или ещё вареники/чебуреки)? какая начинка (овощная/мясная/рыбная)? какая форма пельменя (полумесяц, круг, сатурн, 6-гранка)? какая граммовка (10, 12, 18, 20 грамм)? нужны ли дополнительно тестомес, фаршемес, мукопросеиватель? нужна ли модернизация для более точных настроек?",
+            videoUrl: "https://rutube.ru/video/35c54374315bfd2fed02feb89ac36130/"
+          },
+          test: {
+            passScore: 80,
+            questions: [
+              { q: "Что делает пельменный аппарат?", options: ["Варит пельмени", "Автоматизирует лепку изделий из теста с начинкой", "Замораживает готовую продукцию", "Упаковывает готовые пельмени"], correct: 1 },
+              { q: "Какая серия аппаратов обычно напольная с высокой производительностью?", options: ["60-я серия", "От 120-й серии и выше", "Только 100-я серия", "Все серии настольные"], correct: 1 },
+              { q: "Сколько стоит примерно 'средний' сегмент пельменного аппарата?", options: ["До 200 000 ₽", "Около 500 000 ₽", "От 1,7 млн ₽", "Более 5 млн ₽"], correct: 1 },
+              { q: "Какие формы пельменя нужно уточнить у клиента?", options: ["Только круглая", "Полумесяц, круг, сатурн, 6-гранка", "Только квадратная", "Форма не имеет значения"], correct: 1 },
+              { q: "Когда модернизация аппарата не обязательна?", options: ["Если клиент делает только один тип пельменей с одной начинкой", "Никогда не нужна", "Всегда обязательна", "Только для настольных моделей"], correct: 0 }
+            ]
+          }
         }
       };
+      // ===================================================================
 
       let currentUser = null;
       let userData = null;
       let isAdmin = false;
       let contentData = {};
       let currentModuleKey = null;
-      let editingStageId = null;
-      let savedRange = null;
+      let currentStepIndex = null;
 
       onAuthStateChanged(auth, async (user) => {
         if (!user) { window.location.href = 'index.html'; return; }
@@ -616,7 +564,6 @@
         renderSidebar();
         renderOverview();
         setupStaticHandlers();
-        buildColorSwatches();
       });
 
       document.getElementById('logoutBtn').addEventListener('click', async () => {
@@ -639,49 +586,50 @@
         document.getElementById('overviewRole').textContent = userData.role || 'Сотрудник';
       }
 
+      // ============ МИГРАЦИЯ СТАРОГО ФОРМАТА (theory+test) В НОВЫЙ (steps[]) ============
+      // Старый формат: { theory:{heading,text,videoUrl}, test:{passScore,questions} }
+      // Новый формат:  { steps:[ {id,type:'theory',title,html}, {id,type:'test',title,passScore,questions} ] }
+      // Ничего не удаляется — весь имеющийся контент переносится 1:1 в новый формат.
+      function migrateModuleToSteps(mod) {
+        if (mod.steps && Array.isArray(mod.steps)) return mod;
+        const steps = [];
+        if (mod.theory) {
+          let html = '';
+          if (mod.theory.videoUrl) html += buildVideoEmbedHtml(mod.theory.videoUrl);
+          if (mod.theory.text) {
+            html += mod.theory.text.split('\n\n').map(p => '<p>' + escapeHtml(p).replace(/\n/g,'<br>') + '</p>').join('');
+          }
+          steps.push({ id: 'step_' + Math.random().toString(36).slice(2,9), type: 'theory', title: mod.theory.heading || 'Теория', html: html });
+        }
+        if (mod.test) {
+          steps.push({ id: 'step_' + Math.random().toString(36).slice(2,9), type: 'test', title: 'Тест', passScore: mod.test.passScore || 80, questions: mod.test.questions || [] });
+        }
+        mod.steps = steps;
+        return mod;
+      }
+
+      function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str || '';
+        return div.innerHTML;
+      }
+
       async function loadContent() {
         const snap = await getDocs(collection(db, 'content'));
         contentData = {};
-        snap.forEach((d) => { contentData[d.id] = d.data(); });
+        snap.forEach((d) => { contentData[d.id] = migrateModuleToSteps(d.data()); });
 
         if (Object.keys(contentData).length === 0 && isAdmin) {
           for (const key of Object.keys(DEFAULT_CONTENT)) {
-            await setDoc(doc(db, 'content', key), DEFAULT_CONTENT[key]);
-            contentData[key] = DEFAULT_CONTENT[key];
+            const migrated = migrateModuleToSteps(JSON.parse(JSON.stringify(DEFAULT_CONTENT[key])));
+            await setDoc(doc(db, 'content', key), migrated);
+            contentData[key] = migrated;
           }
         }
       }
 
       function sortedModuleKeys() {
         return Object.keys(contentData).sort((a,b) => (contentData[a].order||0) - (contentData[b].order||0));
-      }
-
-      // ---- Совместимость со старой схемой (theory/test верхнего уровня) ----
-      function getStagesArray(mod) {
-        if (mod.stages && Array.isArray(mod.stages)) return mod.stages;
-        const arr = [];
-        if (mod.theory) {
-          arr.push({
-            id: 'legacy_theory', type: 'theory',
-            heading: mod.theory.heading || '',
-            contentHtml: '<p>' + (mod.theory.text || '').replace(/\n/g, '</p><p>') + '</p>',
-            videosBefore: mod.theory.videoUrl ? [{ url: mod.theory.videoUrl }] : [],
-            videosAfter: []
-          });
-        }
-        if (mod.test) {
-          arr.push({ id: 'legacy_test', type: 'test', passScore: mod.test.passScore || 80, questions: mod.test.questions || [] });
-        }
-        return arr;
-      }
-
-      function materializeStages(mod) {
-        if (!mod.stages || !Array.isArray(mod.stages)) {
-          mod.stages = getStagesArray(mod);
-          delete mod.theory;
-          delete mod.test;
-        }
-        return mod.stages;
       }
 
       function renderSidebar() {
@@ -718,29 +666,54 @@
           if (!title) return;
           const icon = prompt('Введите emoji-иконку', '📦') || '📦';
           const newOrder = sortedModuleKeys().length + 1;
-          const newModule = { title, icon, order: newOrder, stages: [] };
+          const newModule = {
+            title, icon, order: newOrder,
+            steps: [
+              { id: 'step_' + Math.random().toString(36).slice(2,9), type: 'theory', title: 'Введение', html: '<p>Опишите теорию по этому оборудованию...</p>' }
+            ]
+          };
           await setDoc(doc(db, 'content', key), newModule);
           contentData[key] = newModule;
           renderSidebar();
           renderOverview();
-          alert('Оборудование добавлено! Откройте его в меню слева и добавьте первый шаг обучения.');
+          alert('Оборудование добавлено! Откройте его в меню слева, чтобы добавить шаги обучения.');
         });
 
         document.getElementById('editModuleInfoBtn').addEventListener('click', () => openModuleInfoModal(currentModuleKey));
         document.getElementById('saveModuleInfoBtn').addEventListener('click', saveModuleInfo);
         document.getElementById('deleteModuleBtn').addEventListener('click', deleteCurrentModule);
-        document.getElementById('saveTheoryBtn').addEventListener('click', saveTheoryStage);
-        document.getElementById('saveTestBtn').addEventListener('click', saveTestStage);
+
+        document.getElementById('addStepBtn').addEventListener('click', () => openAddStepModal());
+        document.getElementById('stepTypeTheoryOpt').addEventListener('click', () => selectStepType('theory'));
+        document.getElementById('stepTypeTestOpt').addEventListener('click', () => selectStepType('test'));
+        document.getElementById('confirmAddStepBtn').addEventListener('click', confirmAddStep);
+
+        document.getElementById('saveStepEditorBtn').addEventListener('click', saveStepEditor);
+        document.getElementById('deleteStepBtn').addEventListener('click', () => deleteStepByIndex(currentStepIndex, 'modalStepEditor'));
+        document.getElementById('deleteTestStepBtn').addEventListener('click', () => deleteStepByIndex(currentStepIndex, 'modalTest'));
+
+        document.getElementById('saveTestBtn').addEventListener('click', saveTest);
         document.getElementById('addQuestionBtn').addEventListener('click', () => addQuestionEditBlock());
 
-        document.getElementById('addStepBtn').addEventListener('click', () => openModal('modalStepType'));
-        document.getElementById('chooseTheoryBtn').addEventListener('click', () => { closeModal('modalStepType'); addNewStage('theory'); });
-        document.getElementById('chooseTestBtn').addEventListener('click', () => { closeModal('modalStepType'); addNewStage('test'); });
-
-        document.getElementById('addVideoBeforeBtn').addEventListener('click', () => addVideoRow('videosBeforeList'));
-        document.getElementById('addVideoAfterBtn').addEventListener('click', () => addVideoRow('videosAfterList'));
-
-        setupRteToolbar();
+        document.querySelectorAll('#modalStepEditor .toolbar-btn[data-cmd]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const cmd = btn.dataset.cmd;
+            const val = btn.dataset.val || null;
+            document.getElementById('stepContentEditor').focus();
+            document.execCommand(cmd, false, val);
+          });
+        });
+        document.getElementById('insertImageBtn').addEventListener('click', () => {
+          saveEditorSelection();
+          document.getElementById('imageFileInput').click();
+        });
+        document.getElementById('imageFileInput').addEventListener('change', handleImageFileSelected);
+        document.getElementById('insertVideoBtn').addEventListener('click', () => {
+          saveEditorSelection();
+          document.getElementById('insertVideoUrlInput').value = '';
+          openModal('modalInsertVideo');
+        });
+        document.getElementById('confirmInsertVideoBtn').addEventListener('click', confirmInsertVideoIntoEditor);
 
         const usersNav = document.getElementById('usersNavItem');
         if (usersNav) {
@@ -772,30 +745,18 @@
         if (saveEditUserBtn) saveEditUserBtn.addEventListener('click', saveEditedUser);
       }
 
-      // ================= PROGRESS =================
-      function getStageProgress(moduleKey, stageId) {
-        const modProg = (userData.progress && userData.progress[moduleKey]) || {};
-        if (modProg.stages && modProg.stages[stageId]) return modProg.stages[stageId];
-        if (stageId === 'legacy_theory') return { done: !!modProg.theoryViewed };
-        if (stageId === 'legacy_test') return { done: !!modProg.testPassed, score: modProg.testScore || 0 };
-        return { done: false };
-      }
-
-      async function setStageProgress(moduleKey, stageId, valueObj) {
-        if (!userData.progress[moduleKey]) userData.progress[moduleKey] = {};
-        if (!userData.progress[moduleKey].stages) userData.progress[moduleKey].stages = {};
-        userData.progress[moduleKey].stages[stageId] = valueObj;
-        await saveProgress();
-      }
-
       function getModuleProgress(key) {
         const mod = contentData[key];
-        if (!mod) return 0;
-        const stages = getStagesArray(mod);
-        if (stages.length === 0) return 0;
-        let done = 0;
-        stages.forEach((st) => { if (getStageProgress(key, st.id).done) done++; });
-        return Math.round((done / stages.length) * 100);
+        if (!mod || !mod.steps || mod.steps.length === 0) return 0;
+        const prog = (userData.progress && userData.progress[key]) || {};
+        const stepsProg = prog.steps || {};
+        let doneCount = 0;
+        mod.steps.forEach((st) => {
+          const sp = stepsProg[st.id] || {};
+          if (st.type === 'theory' && sp.viewed) doneCount++;
+          if (st.type === 'test' && sp.passed) doneCount++;
+        });
+        return Math.round((doneCount / mod.steps.length) * 100);
       }
 
       function starsForPercent(pct) {
@@ -869,167 +830,138 @@
         return url;
       }
 
+      function buildVideoEmbedHtml(url) {
+        const embedUrl = getEmbedUrl(url);
+        if (!embedUrl) return '';
+        return `<div class="video-embed-wrap" contenteditable="false" data-video-url="${escapeHtml(url)}"><iframe src="${embedUrl}" allowfullscreen></iframe></div>`;
+      }
+
       function openModule(key) {
         currentModuleKey = key;
         const mod = contentData[key];
         document.getElementById('topbarTitle').textContent = mod.title;
         document.getElementById('moduleTitle').textContent = mod.icon + ' ' + mod.title;
-        document.getElementById('moduleSub').textContent = 'Изучайте шаги по порядку — каждый следующий открывается после выполнения предыдущего';
+        document.getElementById('moduleSub').textContent = 'Изучите все шаги ниже, чтобы завершить обучение по этому оборудованию';
         document.getElementById('editModuleInfoBtn').style.display = isAdmin ? 'flex' : 'none';
-        document.getElementById('addStepZone').style.display = isAdmin ? 'block' : 'none';
+        document.getElementById('addStepBtn').style.display = isAdmin ? 'inline-flex' : 'none';
         switchView('module');
         renderModuleStages(key);
+      }
+
+      function isStepUnlocked(mod, prog, idx) {
+        if (idx === 0) return true;
+        const prevStep = mod.steps[idx - 1];
+        const prevProg = (prog.steps && prog.steps[prevStep.id]) || {};
+        if (prevStep.type === 'theory') return !!prevProg.viewed;
+        if (prevStep.type === 'test') return !!prevProg.passed;
+        return true;
       }
 
       function renderModuleStages(key) {
         const mod = contentData[key];
         const container = document.getElementById('moduleStages');
         container.innerHTML = '';
-        const stages = getStagesArray(mod);
 
         if (!userData.progress[key]) userData.progress[key] = {};
+        if (!userData.progress[key].steps) userData.progress[key].steps = {};
+        const prog = userData.progress[key];
 
-        if (stages.length === 0) {
-          container.innerHTML = '<div class="empty-state">Шаги обучения пока не добавлены.</div>';
+        if (!mod.steps || mod.steps.length === 0) {
+          container.innerHTML = '<div class="empty-state">Шаги обучения для этого оборудования пока не добавлены.</div>';
           return;
         }
 
-        let previousDone = true;
-
-        stages.forEach((stage, i) => {
-          const isLocked = !previousDone;
-          const prog = getStageProgress(key, stage.id);
+        mod.steps.forEach((step, idx) => {
+          const stepProg = prog.steps[step.id] || {};
+          const unlocked = isStepUnlocked(mod, prog, idx);
           const card = document.createElement('div');
-          card.className = 'stage-card' + (isLocked ? ' locked' : '');
+          card.className = 'stage-card' + (unlocked ? '' : ' locked');
 
-          const adminBtns = isAdmin ? `
-            <div class="stage-admin-actions">
-              <div class="step-order-btns">
-                <button type="button" class="move-up" data-idx="${i}" title="Выше">▲</button>
-                <button type="button" class="move-down" data-idx="${i}" title="Ниже">▼</button>
-              </div>
-              <button class="edit-pencil" data-edit-idx="${i}" title="Редактировать">✏️</button>
-              <button class="edit-pencil" data-del-idx="${i}" title="Удалить шаг" style="color:#c0362c;">🗑️</button>
-            </div>` : '';
-
-          if (stage.type === 'theory') {
-            const before = (stage.videosBefore || []).map(v => `<div class="video-wrap"><iframe src="${getEmbedUrl(v.url)}" allowfullscreen></iframe></div>`).join('');
-            const after = (stage.videosAfter || []).map(v => `<div class="video-wrap"><iframe src="${getEmbedUrl(v.url)}" allowfullscreen></iframe></div>`).join('');
+          if (step.type === 'theory') {
+            const done = !!stepProg.viewed;
             card.innerHTML = `
               <div class="stage-top-row">
-                <div style="flex:1;"><span class="stage-tag">Шаг ${i+1} · Теория</span><h3>${stage.heading || ''}</h3></div>
-                ${adminBtns}
+                <div style="flex:1;">
+                  <span class="stage-tag">Шаг ${idx+1} · Теория</span>
+                  <h3>${escapeHtml(step.title || '')}</h3>
+                </div>
+                ${isAdmin ? `<div class="step-header-actions"><button class="edit-pencil" data-edit-step="${idx}" title="Редактировать">✏️</button></div>` : ''}
               </div>
-              ${before}
-              <div class="rich-content">${stage.contentHtml || ''}</div>
-              ${after}
-              ${prog.done ? '<span class="done-badge">✓ Теория изучена</span>' : '<button class="btn btn-primary" id="theoryDoneBtn-'+i+'">Я изучил(а) теорию</button>'}
+              ${unlocked ? `<div class="step-content-display">${step.html || ''}</div>${done ? '<span class="done-badge">✓ Шаг изучен</span>' : '<button class="btn btn-primary" data-done-theory="'+idx+'">Я изучил(а) этот шаг</button>'}` : '<p class="locked-note">🔒 Сначала пройдите предыдущий шаг</p>'}
             `;
-            container.appendChild(card);
-            if (!isLocked && !prog.done) {
-              const btn = card.querySelector('#theoryDoneBtn-'+i);
-              if (btn) btn.addEventListener('click', async () => {
-                await setStageProgress(key, stage.id, { done: true });
-                renderModuleStages(key);
-                renderOverview();
-              });
-            }
-          }
-
-          if (stage.type === 'test') {
+          } else if (step.type === 'test') {
+            const passed = !!stepProg.passed;
+            const bestScore = stepProg.score || 0;
             let questionsHtml = '';
-            (stage.questions || []).forEach((q, qi) => {
+            (step.questions || []).forEach((q, qi) => {
               let optsHtml = '';
               (q.options || []).forEach((opt, oi) => {
-                optsHtml += `<label class="option"><input type="radio" name="q-${stage.id}-${qi}" value="${oi}" />${opt}</label>`;
+                optsHtml += `<label class="option"><input type="radio" name="q-${idx}-${qi}" value="${oi}" />${escapeHtml(opt)}</label>`;
               });
-              questionsHtml += `<div class="question"><p>${qi+1}. ${q.q}</p>${optsHtml}</div>`;
+              questionsHtml += `<div class="question"><p>${qi+1}. ${escapeHtml(q.q)}</p>${optsHtml}</div>`;
             });
-
             card.innerHTML = `
               <div class="stage-top-row">
-                <div style="flex:1;"><span class="stage-tag">Шаг ${i+1} · Тест</span><h3>Проверьте знания</h3></div>
-                ${adminBtns}
+                <div style="flex:1;"><span class="stage-tag">Шаг ${idx+1} · Тест</span><h3>${escapeHtml(step.title || 'Проверьте знания')}</h3></div>
+                ${isAdmin ? `<div class="step-header-actions"><button class="edit-pencil" data-edit-teststep="${idx}" title="Редактировать">✏️</button></div>` : ''}
               </div>
-              ${isLocked ? '<p class="locked-note">🔒 Сначала пройдите предыдущий шаг</p>' : `
-                <form id="testForm-${i}">${questionsHtml}<button type="submit" class="btn btn-primary">Проверить ответы</button></form>
-                <div class="test-result" id="testResult-${i}"></div>
-                ${prog.done ? `<div style="margin-top:12px;" class="done-badge">✓ Тест сдан (${prog.score||0}%)</div>` : ''}
+              ${!unlocked ? '<p class="locked-note">🔒 Сначала пройдите предыдущий шаг</p>' : `
+                <form data-test-form="${idx}">${questionsHtml}<button type="submit" class="btn btn-primary">Проверить ответы</button></form>
+                <div class="test-result" data-test-result="${idx}"></div>
+                ${passed ? `<div style="margin-top:12px;" class="done-badge">✓ Тест сдан (${bestScore}%)</div>` : ''}
               `}
             `;
-            container.appendChild(card);
-
-            if (!isLocked) {
-              const form = card.querySelector('#testForm-'+i);
-              if (form) form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const questions = stage.questions || [];
-                let correctCount = 0;
-                questions.forEach((q, qi) => {
-                  const selected = form.querySelector(`input[name="q-${stage.id}-${qi}"]:checked`);
-                  if (selected && parseInt(selected.value) === q.correct) correctCount++;
-                });
-                const score = Math.round((correctCount / questions.length) * 100);
-                const passResult = score >= (stage.passScore || 80);
-                const resultEl = card.querySelector('#testResult-'+i);
-                resultEl.classList.remove('show','pass','fail');
-                resultEl.classList.add('show', passResult ? 'pass' : 'fail');
-                resultEl.textContent = passResult
-                  ? `Отлично! Результат: ${score}%. Тест пройден.`
-                  : `Результат: ${score}%. Нужно набрать минимум ${stage.passScore || 80}%. Попробуйте ещё раз.`;
-                await setStageProgress(key, stage.id, { done: passResult, score });
-                if (passResult) { renderModuleStages(key); renderOverview(); }
-              });
-            }
           }
-
-          previousDone = prog.done;
+          container.appendChild(card);
         });
 
         if (isAdmin) {
-          container.querySelectorAll('[data-edit-idx]').forEach(btn => {
-            btn.addEventListener('click', () => {
-              const idx = parseInt(btn.dataset.editIdx);
-              const stage = getStagesArray(mod)[idx];
-              editingStageId = stage.id;
-              if (stage.type === 'theory') openTheoryModal(key, stage.id);
-              else openTestModal(key, stage.id);
-            });
+          container.querySelectorAll('[data-edit-step]').forEach((btn) => {
+            btn.addEventListener('click', () => openStepEditorModal(parseInt(btn.dataset.editStep)));
           });
-          container.querySelectorAll('[data-del-idx]').forEach(btn => {
-            btn.addEventListener('click', async () => {
-              const idx = parseInt(btn.dataset.delIdx);
-              if (!confirm('Удалить этот шаг обучения?')) return;
-              materializeStages(mod);
-              mod.stages.splice(idx, 1);
-              await setDoc(doc(db, 'content', key), mod);
-              renderModuleStages(key);
-              renderOverview();
-            });
-          });
-          container.querySelectorAll('.move-up').forEach(btn => {
-            btn.addEventListener('click', async () => {
-              const idx = parseInt(btn.dataset.idx);
-              if (idx === 0) return;
-              materializeStages(mod);
-              const arr = mod.stages;
-              [arr[idx-1], arr[idx]] = [arr[idx], arr[idx-1]];
-              await setDoc(doc(db, 'content', key), mod);
-              renderModuleStages(key);
-            });
-          });
-          container.querySelectorAll('.move-down').forEach(btn => {
-            btn.addEventListener('click', async () => {
-              const idx = parseInt(btn.dataset.idx);
-              materializeStages(mod);
-              const arr = mod.stages;
-              if (idx >= arr.length - 1) return;
-              [arr[idx+1], arr[idx]] = [arr[idx], arr[idx+1]];
-              await setDoc(doc(db, 'content', key), mod);
-              renderModuleStages(key);
-            });
+          container.querySelectorAll('[data-edit-teststep]').forEach((btn) => {
+            btn.addEventListener('click', () => openTestModal(parseInt(btn.dataset.editTeststep)));
           });
         }
+        container.querySelectorAll('[data-done-theory]').forEach((btn) => {
+          const idx = parseInt(btn.dataset.doneTheory);
+          btn.addEventListener('click', async () => {
+            const step = mod.steps[idx];
+            if (!userData.progress[key].steps[step.id]) userData.progress[key].steps[step.id] = {};
+            userData.progress[key].steps[step.id].viewed = true;
+            await saveProgress();
+            renderModuleStages(key);
+            renderOverview();
+          });
+        });
+        container.querySelectorAll('[data-test-form]').forEach((form) => {
+          const idx = parseInt(form.dataset.testForm);
+          form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const step = mod.steps[idx];
+            const questions = step.questions || [];
+            let correctCount = 0;
+            questions.forEach((q, qi) => {
+              const selected = e.target.querySelector(`input[name="q-${idx}-${qi}"]:checked`);
+              if (selected && parseInt(selected.value) === q.correct) correctCount++;
+            });
+            const score = questions.length ? Math.round((correctCount / questions.length) * 100) : 0;
+            const passResult = score >= (step.passScore || 80);
+
+            const resultEl = container.querySelector(`[data-test-result="${idx}"]`);
+            resultEl.classList.remove('show','pass','fail');
+            resultEl.classList.add('show', passResult ? 'pass' : 'fail');
+            resultEl.textContent = passResult
+              ? `Отлично! Результат: ${score}%. Тест пройден.`
+              : `Результат: ${score}%. Нужно набрать минимум ${step.passScore || 80}%. Попробуйте ещё раз.`;
+
+            if (!userData.progress[key].steps[step.id]) userData.progress[key].steps[step.id] = {};
+            userData.progress[key].steps[step.id].passed = passResult;
+            userData.progress[key].steps[step.id].score = score;
+            await saveProgress();
+            if (passResult) { renderModuleStages(key); renderOverview(); }
+          });
+        });
       }
 
       async function saveProgress() {
@@ -1037,76 +969,125 @@
         catch (err) { console.error('Ошибка сохранения прогресса', err); }
       }
 
-      // ============ ADD / EDIT STAGES ============
-      function genStageId() { return 'st_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+      function openModal(id) { document.getElementById(id).classList.add('show'); }
+      window.closeModal = function(id) { document.getElementById(id).classList.remove('show'); };
 
-      async function addNewStage(type) {
+      let selectedNewStepType = 'theory';
+      function selectStepType(type) {
+        selectedNewStepType = type;
+        document.getElementById('stepTypeTheoryOpt').classList.toggle('selected', type === 'theory');
+        document.getElementById('stepTypeTestOpt').classList.toggle('selected', type === 'test');
+      }
+      function openAddStepModal() {
+        selectStepType('theory');
+        document.getElementById('newStepTitleInput').value = '';
+        openModal('modalAddStep');
+      }
+      async function confirmAddStep() {
+        const title = document.getElementById('newStepTitleInput').value.trim();
+        if (!title) { alert('Введите название шага'); return; }
         const mod = contentData[currentModuleKey];
-        materializeStages(mod);
-        const newStage = type === 'theory'
-          ? { id: genStageId(), type: 'theory', heading: 'Новый шаг теории', videosBefore: [], videosAfter: [], contentHtml: '<p>Опишите теорию здесь...</p>' }
-          : { id: genStageId(), type: 'test', passScore: 80, questions: [{ q: 'Пример вопроса?', options: ['Вариант 1','Вариант 2','Вариант 3','Вариант 4'], correct: 0 }] };
-        mod.stages.push(newStage);
+        if (!mod.steps) mod.steps = [];
+        const newStep = selectedNewStepType === 'theory'
+          ? { id: 'step_' + Math.random().toString(36).slice(2,9), type: 'theory', title, html: '<p>Опишите содержимое этого шага...</p>' }
+          : { id: 'step_' + Math.random().toString(36).slice(2,9), type: 'test', title, passScore: 80, questions: [] };
+        mod.steps.push(newStep);
         await setDoc(doc(db, 'content', currentModuleKey), mod);
+        closeModal('modalAddStep');
         renderModuleStages(currentModuleKey);
         renderOverview();
-        editingStageId = newStage.id;
-        if (type === 'theory') openTheoryModal(currentModuleKey, newStage.id);
-        else openTestModal(currentModuleKey, newStage.id);
+        const newIdx = mod.steps.length - 1;
+        if (newStep.type === 'theory') openStepEditorModal(newIdx); else openTestModal(newIdx);
       }
 
-      function findStage(mod, stageId) {
-        const stages = getStagesArray(mod);
-        return stages.find(s => s.id === stageId);
-      }
-
-      // ---- THEORY MODAL ----
-      function addVideoRow(listId, url) {
-        const list = document.getElementById(listId);
-        const row = document.createElement('div');
-        row.className = 'video-position-row';
-        row.innerHTML = `<input type="text" class="video-url-input" placeholder="Ссылка на видео (YouTube/Rutube)" value="${(url||'').replace(/"/g,'&quot;')}" /><button type="button" class="rm-video">✕</button>`;
-        row.querySelector('.rm-video').addEventListener('click', () => row.remove());
-        list.appendChild(row);
-      }
-
-      function openTheoryModal(key, stageId) {
-        const mod = contentData[key];
-        const stage = findStage(mod, stageId);
-        document.getElementById('theoryHeadingInput').value = stage.heading || '';
-        document.getElementById('theoryContentEditable').innerHTML = stage.contentHtml || '';
-
-        const beforeList = document.getElementById('videosBeforeList');
-        const afterList = document.getElementById('videosAfterList');
-        beforeList.innerHTML = '';
-        afterList.innerHTML = '';
-        (stage.videosBefore || []).forEach(v => addVideoRow('videosBeforeList', v.url));
-        (stage.videosAfter || []).forEach(v => addVideoRow('videosAfterList', v.url));
-
-        openModal('modalTheory');
-      }
-
-      async function saveTheoryStage() {
+      function openStepEditorModal(idx) {
+        currentStepIndex = idx;
         const mod = contentData[currentModuleKey];
-        materializeStages(mod);
-        const stage = findStage(mod, editingStageId);
-        stage.heading = document.getElementById('theoryHeadingInput').value;
-        stage.contentHtml = document.getElementById('theoryContentEditable').innerHTML;
-        stage.videosBefore = Array.from(document.querySelectorAll('#videosBeforeList .video-url-input')).map(i => ({url: i.value.trim()})).filter(v => v.url);
-        stage.videosAfter = Array.from(document.querySelectorAll('#videosAfterList .video-url-input')).map(i => ({url: i.value.trim()})).filter(v => v.url);
-        await setDoc(doc(db, 'content', currentModuleKey), mod);
-        closeModal('modalTheory');
-        renderModuleStages(currentModuleKey);
+        const step = mod.steps[idx];
+        document.getElementById('stepEditorTitleLabel').textContent = 'Редактировать шаг: ' + (step.title || '');
+        document.getElementById('stepTitleInput').value = step.title || '';
+        document.getElementById('stepContentEditor').innerHTML = step.html || '';
+        openModal('modalStepEditor');
       }
 
-      // ---- TEST MODAL ----
-      function openTestModal(key, stageId) {
-        const mod = contentData[key];
-        const stage = findStage(mod, stageId);
-        document.getElementById('testPassScoreInput').value = stage.passScore || 80;
+      let savedEditorRange = null;
+      function saveEditorSelection() {
+        const editor = document.getElementById('stepContentEditor');
+        const sel = window.getSelection();
+        if (sel.rangeCount > 0) {
+          const range = sel.getRangeAt(0);
+          if (editor.contains(range.commonAncestorContainer)) {
+            savedEditorRange = range.cloneRange();
+            return;
+          }
+        }
+        const range = document.createRange();
+        range.selectNodeContents(editor);
+        range.collapse(false);
+        savedEditorRange = range;
+      }
+      function restoreEditorSelection() {
+        const editor = document.getElementById('stepContentEditor');
+        editor.focus();
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        if (savedEditorRange) sel.addRange(savedEditorRange);
+      }
+
+      function handleImageFileSelected(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          restoreEditorSelection();
+          document.execCommand('insertHTML', false, `<img src="${ev.target.result}" />`);
+          e.target.value = '';
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function confirmInsertVideoIntoEditor() {
+        const url = document.getElementById('insertVideoUrlInput').value.trim();
+        if (!url) { alert('Введите ссылку на видео'); return; }
+        const embedHtml = buildVideoEmbedHtml(url);
+        if (!embedHtml) { alert('Не удалось распознать ссылку на видео (поддерживаются YouTube и Rutube)'); return; }
+        restoreEditorSelection();
+        document.execCommand('insertHTML', false, embedHtml + '<p><br></p>');
+        closeModal('modalInsertVideo');
+      }
+
+      async function saveStepEditor() {
+        const mod = contentData[currentModuleKey];
+        const step = mod.steps[currentStepIndex];
+        step.title = document.getElementById('stepTitleInput').value.trim() || step.title;
+        step.html = document.getElementById('stepContentEditor').innerHTML;
+        await setDoc(doc(db, 'content', currentModuleKey), mod);
+        closeModal('modalStepEditor');
+        renderModuleStages(currentModuleKey);
+        renderOverview();
+      }
+
+      async function deleteStepByIndex(idx, modalIdToClose) {
+        if (idx === null || idx === undefined) return;
+        if (!confirm('Удалить этот шаг безвозвратно?')) return;
+        const mod = contentData[currentModuleKey];
+        mod.steps.splice(idx, 1);
+        await setDoc(doc(db, 'content', currentModuleKey), mod);
+        closeModal(modalIdToClose);
+        renderModuleStages(currentModuleKey);
+        renderOverview();
+      }
+
+      function openTestModal(idx) {
+        currentStepIndex = idx;
+        const mod = contentData[currentModuleKey];
+        const step = mod.steps[idx];
+        document.getElementById('testEditorTitleLabel').textContent = 'Редактировать тест: ' + (step.title || '');
+        document.getElementById('testStepTitleInput').value = step.title || '';
+        document.getElementById('testPassScoreInput').value = step.passScore || 80;
         const list = document.getElementById('questionsEditList');
         list.innerHTML = '';
-        (stage.questions || []).forEach((q) => addQuestionEditBlock(q));
+        (step.questions || []).forEach((q) => addQuestionEditBlock(q));
         openModal('modalTest');
       }
 
@@ -1122,7 +1103,11 @@
         for (let i = 0; i < 4; i++) {
           const val = q.options[i] || '';
           const checked = q.correct === i ? 'checked' : '';
-          optsHtml += `<div class="opt-row"><input type="radio" name="correct_${blockId}" value="${i}" ${checked} /><input type="text" class="opt-input" placeholder="Вариант ${i+1}" value="${val.replace(/"/g,'&quot;')}" /></div>`;
+          optsHtml += `
+            <div class="opt-row">
+              <input type="radio" name="correct_${blockId}" value="${i}" ${checked} />
+              <input type="text" class="opt-input" placeholder="Вариант ${i+1}" value="${val.replace(/"/g,'&quot;')}" />
+            </div>`;
         }
 
         block.innerHTML = `
@@ -1134,10 +1119,10 @@
         block.querySelector('.remove-q').addEventListener('click', () => block.remove());
       }
 
-      async function saveTestStage() {
+      async function saveTest() {
         const mod = contentData[currentModuleKey];
-        materializeStages(mod);
-        const stage = findStage(mod, editingStageId);
+        const step = mod.steps[currentStepIndex];
+        const title = document.getElementById('testStepTitleInput').value.trim();
         const passScore = parseInt(document.getElementById('testPassScoreInput').value) || 80;
         const blocks = document.querySelectorAll('#questionsEditList .q-edit-block');
         const questions = [];
@@ -1149,139 +1134,15 @@
           const correct = correctRadio ? parseInt(correctRadio.value) : 0;
           if (qText) questions.push({ q: qText, options, correct });
         });
-        stage.passScore = passScore;
-        stage.questions = questions;
+        if (title) step.title = title;
+        step.passScore = passScore;
+        step.questions = questions;
         await setDoc(doc(db, 'content', currentModuleKey), mod);
         closeModal('modalTest');
         renderModuleStages(currentModuleKey);
+        renderOverview();
       }
 
-      // ---- RICH TEXT EDITOR TOOLBAR ----
-      function buildColorSwatches() {
-        const foreWrap = document.getElementById('foreColorSwatches');
-        const hiliteWrap = document.getElementById('hiliteColorSwatches');
-        PALETTE_COLORS.forEach(color => {
-          const sw1 = document.createElement('div');
-          sw1.className = 'rte-swatch'; sw1.style.background = color;
-          sw1.addEventListener('mousedown', (e) => e.preventDefault());
-          sw1.addEventListener('click', () => { restoreSelection(); document.execCommand('foreColor', false, color); closeAllPalettes(); });
-          foreWrap.appendChild(sw1);
-
-          const sw2 = document.createElement('div');
-          sw2.className = 'rte-swatch'; sw2.style.background = color;
-          sw2.addEventListener('mousedown', (e) => e.preventDefault());
-          sw2.addEventListener('click', () => { restoreSelection(); document.execCommand('hiliteColor', false, color); closeAllPalettes(); });
-          hiliteWrap.appendChild(sw2);
-        });
-      }
-
-      function closeAllPalettes() {
-        document.getElementById('foreColorPalette').classList.remove('show');
-        document.getElementById('hiliteColorPalette').classList.remove('show');
-      }
-
-      function saveSelection() {
-        const editable = document.getElementById('theoryContentEditable');
-        const sel = window.getSelection();
-        if (sel.rangeCount > 0 && editable.contains(sel.anchorNode)) {
-          savedRange = sel.getRangeAt(0).cloneRange();
-        }
-      }
-
-      function restoreSelection() {
-        const editable = document.getElementById('theoryContentEditable');
-        editable.focus();
-        if (savedRange) {
-          const sel = window.getSelection();
-          sel.removeAllRanges();
-          sel.addRange(savedRange);
-        }
-      }
-
-      function setupRteToolbar() {
-        const editable = document.getElementById('theoryContentEditable');
-        editable.addEventListener('mouseup', saveSelection);
-        editable.addEventListener('keyup', saveSelection);
-
-        document.querySelectorAll('.rte-btn[data-cmd]').forEach(btn => {
-          btn.addEventListener('mousedown', (e) => e.preventDefault());
-          btn.addEventListener('click', () => {
-            editable.focus();
-            document.execCommand(btn.dataset.cmd, false, null);
-            saveSelection();
-          });
-        });
-
-        document.getElementById('clearFormatBtn').addEventListener('mousedown', (e) => e.preventDefault());
-        document.getElementById('clearFormatBtn').addEventListener('click', () => {
-          editable.focus();
-          document.execCommand('removeFormat', false, null);
-        });
-
-        const foreBtn = document.getElementById('foreColorBtn');
-        const forePalette = document.getElementById('foreColorPalette');
-        foreBtn.addEventListener('mousedown', (e) => e.preventDefault());
-        foreBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          saveSelection();
-          document.getElementById('hiliteColorPalette').classList.remove('show');
-          forePalette.classList.toggle('show');
-        });
-
-        const hiliteBtn = document.getElementById('hiliteColorBtn');
-        const hilitePalette = document.getElementById('hiliteColorPalette');
-        hiliteBtn.addEventListener('mousedown', (e) => e.preventDefault());
-        hiliteBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          saveSelection();
-          forePalette.classList.remove('show');
-          hilitePalette.classList.toggle('show');
-        });
-
-        document.getElementById('foreColorPicker').addEventListener('input', (e) => {
-          restoreSelection();
-          document.execCommand('foreColor', false, e.target.value);
-        });
-        document.getElementById('hiliteColorPicker').addEventListener('input', (e) => {
-          restoreSelection();
-          document.execCommand('hiliteColor', false, e.target.value);
-        });
-
-        document.addEventListener('click', (e) => {
-          if (!e.target.closest('.rte-color-wrap')) closeAllPalettes();
-        });
-
-        const insertImageBtn = document.getElementById('insertImageBtn');
-        const imageFileInput = document.getElementById('imageFileInput');
-        insertImageBtn.addEventListener('mousedown', (e) => e.preventDefault());
-        insertImageBtn.addEventListener('click', () => {
-          saveSelection();
-          imageFileInput.value = '';
-          imageFileInput.click();
-        });
-
-        imageFileInput.addEventListener('change', async () => {
-          const file = imageFileInput.files[0];
-          if (!file) return;
-          const statusEl = document.getElementById('uploadStatus');
-          statusEl.classList.add('show');
-          statusEl.textContent = 'Загрузка изображения...';
-          try {
-            const path = 'content-images/' + currentModuleKey + '/' + Date.now() + '_' + file.name;
-            const fileRef = storageRef(storage, path);
-            await uploadBytes(fileRef, file);
-            const url = await getDownloadURL(fileRef);
-            restoreSelection();
-            document.execCommand('insertImage', false, url);
-            statusEl.textContent = 'Изображение добавлено!';
-            setTimeout(() => statusEl.classList.remove('show'), 1500);
-          } catch (err) {
-            statusEl.textContent = 'Ошибка загрузки: ' + (err.message || 'неизвестная ошибка');
-          }
-        });
-      }
-
-      // ============ MODULE INFO ============
       function openModuleInfoModal(key) {
         const mod = contentData[key];
         document.getElementById('moduleIconInput').value = mod.icon || '📦';
@@ -1312,32 +1173,26 @@
         renderOverview();
       }
 
-      window.closeModal = function(id) { document.getElementById(id).classList.remove('show'); };
-      function openModal(id) { document.getElementById(id).classList.add('show'); }
-
-      // ============ USERS MANAGEMENT ============
       let allUsersCache = {};
       let editingUserEmail = null;
-      let currentDetailEmail = null;
 
       function calcOverallProgressForUser(uData) {
         const keys = sortedModuleKeys();
         if (keys.length === 0) return 0;
+        const prog = (uData && uData.progress) || {};
         let total = 0;
         keys.forEach((key) => {
           const mod = contentData[key];
-          const stages = getStagesArray(mod);
-          if (stages.length === 0) return;
-          let done = 0;
-          stages.forEach((st) => {
-            const modProg = (uData.progress && uData.progress[key]) || {};
-            let stDone = false;
-            if (modProg.stages && modProg.stages[st.id]) stDone = !!modProg.stages[st.id].done;
-            else if (st.id === 'legacy_theory') stDone = !!modProg.theoryViewed;
-            else if (st.id === 'legacy_test') stDone = !!modProg.testPassed;
-            if (stDone) done++;
+          const p = prog[key] || {};
+          const stepsProg = p.steps || {};
+          if (!mod.steps || mod.steps.length === 0) { total += 0; return; }
+          let doneCount = 0;
+          mod.steps.forEach((st) => {
+            const sp = stepsProg[st.id] || {};
+            if (st.type === 'theory' && sp.viewed) doneCount++;
+            if (st.type === 'test' && sp.passed) doneCount++;
           });
-          total += Math.round((done / stages.length) * 100);
+          total += Math.round((doneCount / mod.steps.length) * 100);
         });
         return Math.round(total / keys.length);
       }
@@ -1368,22 +1223,43 @@
           tr.style.cursor = 'pointer';
           tr.dataset.email = email;
           tr.innerHTML = `
-            <td><div class="u-name-cell"><div class="u-avatar-sm">${initials}</div><div class="u-name-text"><b>${name}</b><span>${email}</span></div></div></td>
+            <td>
+              <div class="u-name-cell">
+                <div class="u-avatar-sm">${initials}</div>
+                <div class="u-name-text"><b>${name}</b><span>${email}</span></div>
+              </div>
+            </td>
             <td><span class="role-badge">${role}</span></td>
-            <td><div class="mini-progress"><div class="mini-progress-bar"><i style="width:${pct}%"></i></div><span style="font-size:12px;color:var(--text-light);white-space:nowrap;">${pct}%</span></div></td>
-            <td><div class="table-actions">
-              <button class="btn btn-secondary btn-sm" data-action="edit" data-email="${email}">✏️ Изменить</button>
-              <button class="btn btn-secondary btn-sm" data-action="reset" data-email="${email}">🔑 Сброс пароля</button>
-              <button class="btn btn-danger btn-sm" data-action="delete" data-email="${email}">🗑️ Удалить</button>
-            </div></td>
+            <td>
+              <div class="mini-progress">
+                <div class="mini-progress-bar"><i style="width:${pct}%"></i></div>
+                <span style="font-size:12px;color:var(--text-light);white-space:nowrap;">${pct}%</span>
+              </div>
+            </td>
+            <td>
+              <div class="table-actions">
+                <button class="btn btn-secondary btn-sm" data-action="edit" data-email="${email}">✏️ Изменить</button>
+                <button class="btn btn-secondary btn-sm" data-action="reset" data-email="${email}">🔑 Сброс пароля</button>
+                <button class="btn btn-danger btn-sm" data-action="delete" data-email="${email}">🗑️ Удалить</button>
+              </div>
+            </td>
           `;
-          tr.addEventListener('click', (e) => { if (e.target.closest('button')) return; openUserDetail(email); });
+          tr.addEventListener('click', (e) => {
+            if (e.target.closest('button')) return;
+            openUserDetail(email);
+          });
           tbody.appendChild(tr);
         });
 
-        tbody.querySelectorAll('button[data-action="edit"]').forEach(btn => btn.addEventListener('click', () => openEditUserModal(btn.dataset.email)));
-        tbody.querySelectorAll('button[data-action="reset"]').forEach(btn => btn.addEventListener('click', () => resetUserPassword(btn.dataset.email)));
-        tbody.querySelectorAll('button[data-action="delete"]').forEach(btn => btn.addEventListener('click', () => deleteUser(btn.dataset.email)));
+        tbody.querySelectorAll('button[data-action="edit"]').forEach((btn) => {
+          btn.addEventListener('click', () => openEditUserModal(btn.dataset.email));
+        });
+        tbody.querySelectorAll('button[data-action="reset"]').forEach((btn) => {
+          btn.addEventListener('click', () => resetUserPassword(btn.dataset.email));
+        });
+        tbody.querySelectorAll('button[data-action="delete"]').forEach((btn) => {
+          btn.addEventListener('click', () => deleteUser(btn.dataset.email));
+        });
       }
 
       async function createNewUser() {
@@ -1395,7 +1271,9 @@
         msgEl.style.display = 'none';
 
         if (!name || !email || password.length < 6) {
-          msgEl.style.display = 'block'; msgEl.style.background = 'rgba(230,60,60,0.08)'; msgEl.style.color = '#c0362c';
+          msgEl.style.display = 'block';
+          msgEl.style.background = 'rgba(230,60,60,0.08)';
+          msgEl.style.color = '#c0362c';
           msgEl.textContent = 'Заполните ФИО, email и пароль (минимум 6 символов).';
           return;
         }
@@ -1403,13 +1281,24 @@
         try {
           await createUserWithEmailAndPassword(secondaryAuth, email, password);
           await signOut(secondaryAuth);
-          await setDoc(doc(db, 'users', email), { name, role, progress: {} });
 
-          msgEl.style.display = 'block'; msgEl.style.background = 'rgba(46,160,67,0.1)'; msgEl.style.color = '#1e7a34';
+          await setDoc(doc(db, 'users', email), {
+            name, role, progress: {}
+          });
+
+          msgEl.style.display = 'block';
+          msgEl.style.background = 'rgba(46,160,67,0.1)';
+          msgEl.style.color = '#1e7a34';
           msgEl.textContent = 'Пользователь успешно создан!';
-          setTimeout(() => { closeModal('modalAddUser'); renderUsersTable(); }, 900);
+
+          setTimeout(() => {
+            closeModal('modalAddUser');
+            renderUsersTable();
+          }, 900);
         } catch (err) {
-          msgEl.style.display = 'block'; msgEl.style.background = 'rgba(230,60,60,0.08)'; msgEl.style.color = '#c0362c';
+          msgEl.style.display = 'block';
+          msgEl.style.background = 'rgba(230,60,60,0.08)';
+          msgEl.style.color = '#c0362c';
           let text = 'Ошибка при создании пользователя.';
           if (err.code === 'auth/email-already-in-use') text = 'Пользователь с таким email уже существует.';
           if (err.code === 'auth/invalid-email') text = 'Некорректный email.';
@@ -1435,35 +1324,7 @@
         renderUsersTable();
       }
 
-      async function resetUserPassword(email) {
-        if (!confirm(`Отправить ${email} письмо со ссылкой для смены пароля?`)) return;
-        try {
-          await sendPasswordResetEmail(secondaryAuth, email);
-          alert('Письмо со ссылкой для смены пароля отправлено на ' + email);
-        } catch (err) {
-          alert('Не удалось отправить письмо: ' + (err.message || 'неизвестная ошибка'));
-        }
-      }
-
-      async function deleteUser(email) {
-        if (email === ADMIN_EMAIL) { alert('Нельзя удалить учётную запись администратора.'); return; }
-        const name = (allUsersCache[email] && allUsersCache[email].name) || email;
-        const confirmed = confirm('Удалить сотрудника «' + name + '» (' + email + ')? Все данные и прогресс обучения будут безвозвратно удалены.');
-        if (!confirmed) return;
-        try {
-          await deleteDoc(doc(db, 'users', email));
-          delete allUsersCache[email];
-          alert('Сотрудник удалён из системы.');
-          if (document.getElementById('view-userdetail').classList.contains('active')) {
-            switchView('users');
-            document.getElementById('topbarTitle').textContent = 'Пользователи';
-            document.getElementById('usersNavItem').classList.add('active');
-          }
-          renderUsersTable();
-        } catch (err) {
-          alert('Не удалось удалить пользователя: ' + (err.message || 'неизвестная ошибка'));
-        }
-      }
+      let currentDetailEmail = null;
 
       function openUserDetail(email) {
         currentDetailEmail = email;
@@ -1483,33 +1344,37 @@
         const listEl = document.getElementById('udModulesList');
         listEl.innerHTML = '';
         const keys = sortedModuleKeys();
+        const prog = (u && u.progress) || {};
 
         if (keys.length === 0) {
           listEl.innerHTML = '<div class="empty-state">Модули обучения пока не добавлены.</div>';
         } else {
           keys.forEach((key) => {
             const mod = contentData[key];
-            const stages = getStagesArray(mod);
-            const modProg = (u.progress && u.progress[key]) || {};
+            const p = prog[key] || {};
+            const stepsProg = p.steps || {};
+            const totalSteps = (mod.steps || []).length;
             let doneCount = 0;
             let stagesHtml = '';
-            stages.forEach((st, si) => {
-              let stDone = false, stScore = null;
-              if (modProg.stages && modProg.stages[st.id]) { stDone = !!modProg.stages[st.id].done; stScore = modProg.stages[st.id].score; }
-              else if (st.id === 'legacy_theory') stDone = !!modProg.theoryViewed;
-              else if (st.id === 'legacy_test') { stDone = !!modProg.testPassed; stScore = modProg.testScore; }
-              if (stDone) doneCount++;
-              const label = st.type === 'theory' ? 'Теория' : 'Тест';
-              const scoreText = (st.type === 'test' && stScore !== null && stScore !== undefined) ? ` (${stScore}%)` : '';
-              stagesHtml += `<div class="mp-stage ${stDone ? 'done' : 'pending'}"><span class="stage-icon">${stDone ? '✓' : '○'}</span>Шаг ${si+1} · ${label}${stDone ? scoreText : ''}</div>`;
+            (mod.steps || []).forEach((st) => {
+              const sp = stepsProg[st.id] || {};
+              let done = false;
+              let label = '';
+              if (st.type === 'theory') { done = !!sp.viewed; label = (st.title || 'Теория') + (done ? ' изучена' : ' не изучена'); }
+              if (st.type === 'test') { done = !!sp.passed; label = (st.title || 'Тест') + (done ? (' сдан (' + (sp.score||0) + '%)') : ' не сдан'); }
+              if (done) doneCount++;
+              stagesHtml += `<div class="mp-stage ${done ? 'done' : 'pending'}"><span class="stage-icon">${done ? '✓' : '○'}</span> ${escapeHtml(label)}</div>`;
             });
-            const pct = stages.length ? Math.round((doneCount / stages.length) * 100) : 0;
+            const pct = totalSteps ? Math.round((doneCount / totalSteps) * 100) : 0;
             const stars = starsForPercent(pct);
 
             const row = document.createElement('div');
             row.className = 'module-progress-row';
             row.innerHTML = `
-              <div class="mp-top"><h4>${mod.icon || '📦'} ${mod.title}</h4><span class="stars">${stars > 0 ? '⭐'.repeat(stars) : '—'}</span></div>
+              <div class="mp-top">
+                <h4>${mod.icon || '📦'} ${mod.title}</h4>
+                <span class="stars">${stars > 0 ? '⭐'.repeat(stars) : '—'}</span>
+              </div>
               <div class="progress-line"><i style="width:${pct}%"></i></div>
               <div class="module-foot"><span>Прогресс ${pct}%</span></div>
               <div class="mp-stage-list">${stagesHtml}</div>
@@ -1523,15 +1388,63 @@
         document.getElementById('topbarTitle').textContent = 'Карточка сотрудника';
       }
 
-      document.getElementById('backToUsersBtn').addEventListener('click', () => {
-        switchView('users');
-        document.getElementById('topbarTitle').textContent = 'Пользователи';
-        document.getElementById('usersNavItem').classList.add('active');
-      });
+      const backToUsersBtn = document.getElementById('backToUsersBtn');
+      if (backToUsersBtn) {
+        backToUsersBtn.addEventListener('click', () => {
+          switchView('users');
+          document.getElementById('topbarTitle').textContent = 'Пользователи';
+          const usersNav = document.getElementById('usersNavItem');
+          if (usersNav) usersNav.classList.add('active');
+        });
+      }
 
-      document.getElementById('udDeleteBtn').addEventListener('click', () => {
-        if (currentDetailEmail) deleteUser(currentDetailEmail);
-      });
+      const udDeleteBtn = document.getElementById('udDeleteBtn');
+      if (udDeleteBtn) {
+        udDeleteBtn.addEventListener('click', () => {
+          if (currentDetailEmail) deleteUser(currentDetailEmail);
+        });
+      }
+
+      async function deleteUser(email) {
+        if (email === ADMIN_EMAIL) {
+          alert('Нельзя удалить учётную запись администратора.');
+          return;
+        }
+        const name = (allUsersCache[email] && allUsersCache[email].name) || email;
+        const confirmed = confirm(
+          `Удалить сотрудника «${name}» (${email})?\n\n` +
+          `Все данные и прогресс обучения будут безвозвратно удалены из системы. ` +
+          `Доступ к личному кабинету будет закрыт.`
+        );
+        if (!confirmed) return;
+
+        try {
+          await deleteDoc(doc(db, 'users', email));
+          delete allUsersCache[email];
+
+          alert('Сотрудник удалён из системы.');
+
+          if (document.getElementById('view-userdetail').classList.contains('active')) {
+            switchView('users');
+            document.getElementById('topbarTitle').textContent = 'Пользователи';
+            const usersNav = document.getElementById('usersNavItem');
+            if (usersNav) usersNav.classList.add('active');
+          }
+          renderUsersTable();
+        } catch (err) {
+          alert('Не удалось удалить пользователя: ' + (err.message || 'неизвестная ошибка'));
+        }
+      }
+
+      async function resetUserPassword(email) {
+        if (!confirm(`Отправить ${email} письмо со ссылкой для смены пароля?`)) return;
+        try {
+          await sendPasswordResetEmail(secondaryAuth, email);
+          alert('Письмо со ссылкой для смены пароля отправлено на ' + email);
+        } catch (err) {
+          alert('Не удалось отправить письмо: ' + (err.message || 'неизвестная ошибка'));
+        }
+      }
     </script>
   </body>
 </html>
