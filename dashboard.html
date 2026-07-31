@@ -207,9 +207,19 @@
       .step-type-select-row{display:flex; gap:14px; margin-bottom:16px;}
       .step-type-option{flex:1; border:1.5px solid var(--gray-line); border-radius:10px; padding:14px; text-align:center; cursor:pointer; font-weight:700; font-size:13.5px; color:var(--text-light); transition:all .15s;}
       .step-type-option.selected{border-color:var(--orange); background:rgba(255,129,0,0.08); color:var(--orange-dark);}
+            /* ===== TOAST NOTIFICATIONS ===== */
+      #toastContainer{position:fixed; top:20px; right:20px; z-index:2000; display:flex; flex-direction:column; gap:10px;}
+      .toast{background:#fff; border-radius:10px; padding:14px 20px; box-shadow:0 8px 24px rgba(0,0,0,0.15); font-size:14px; font-weight:600; display:flex; align-items:center; gap:10px; min-width:260px; max-width:360px; opacity:0; transform:translateX(30px); transition:all .3s ease; border-left:4px solid var(--orange);}
+      .toast.show{opacity:1; transform:translateX(0);}
+      .toast.success{border-left-color:#2ea043; color:#1e7a34;}
+      .toast.error{border-left-color:#c0362c; color:#c0362c;}
+
     </style>
+    
   </head>
   <body>
+    <div id="toastContainer"></div>
+
     <aside class="sidebar">
       <div class="sidebar-logo"><div class="logo-badge">А</div>Академия АЛЬФАПРОМ</div>
 
@@ -672,7 +682,8 @@
           contentData[key] = newModule;
           renderSidebar();
           renderOverview();
-          alert('Оборудование добавлено! Откройте его в меню слева, чтобы добавить шаги обучения.');
+         showToast('Оборудование добавлено! Откройте его в меню слева, чтобы добавить шаги обучения.');
+
         });
 
         document.getElementById('editModuleInfoBtn').addEventListener('click', () => openModuleInfoModal(currentModuleKey));
@@ -960,6 +971,22 @@
         });
       }
 
+            function showToast(message, type) {
+        type = type || 'success';
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = 'toast ' + type;
+        toast.textContent = (type === 'success' ? '✓ ' : '⚠ ') + message;
+        container.appendChild(toast);
+        requestAnimationFrame(() => toast.classList.add('show'));
+        setTimeout(() => {
+          toast.classList.remove('show');
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+
+
+
       async function saveProgress() {
         try { await setDoc(doc(db, 'users', currentUser.email), userData, { merge: true }); }
         catch (err) { console.error('Ошибка сохранения прогресса', err); }
@@ -994,6 +1021,8 @@
         renderOverview();
         const newIdx = mod.steps.length - 1;
         if (newStep.type === 'theory') openStepEditorModal(newIdx); else openTestModal(newIdx);
+                showToast('Шаг добавлен');
+
       }
 
       function openStepEditorModal(idx) {
@@ -1060,7 +1089,8 @@
         await setDoc(doc(db, 'content', currentModuleKey), mod);
         closeModal('modalStepEditor');
         renderModuleStages(currentModuleKey);
-        renderOverview();
+        renderOverview();        showToast('Шаг добавлен');
+
       }
 
       async function deleteStepByIndex(idx, modalIdToClose) {
@@ -1071,7 +1101,9 @@
         await setDoc(doc(db, 'content', currentModuleKey), mod);
         closeModal(modalIdToClose);
         renderModuleStages(currentModuleKey);
-        renderOverview();
+        renderOverview();               showToast('Шаг удалён');
+
+
       }
 
       function openTestModal(idx) {
@@ -1136,7 +1168,9 @@
         await setDoc(doc(db, 'content', currentModuleKey), mod);
         closeModal('modalTest');
         renderModuleStages(currentModuleKey);
-        renderOverview();
+        renderOverview();                showToast('Тест сохранён');
+
+
       }
 
       function openModuleInfoModal(key) {
@@ -1154,7 +1188,9 @@
         closeModal('modalModuleInfo');
         renderSidebar();
         openModule(currentModuleKey);
-        renderOverview();
+        renderOverview();               showToast('Оборудование обновлено');
+
+
       }
 
       async function deleteCurrentModule() {
@@ -1166,7 +1202,8 @@
         switchView('overview');
         document.getElementById('topbarTitle').textContent = 'Личный кабинет';
         document.querySelector('.nav-item[data-view="overview"]').classList.add('active');
-        renderOverview();
+        renderOverview();        showToast('Оборудование удалено');
+
       }
 
       let allUsersCache = {};
@@ -1317,7 +1354,8 @@
         if (!editingUserEmail) return;
         await setDoc(doc(db, 'users', editingUserEmail), { name, role }, { merge: true });
         closeModal('modalEditUser');
-        renderUsersTable();
+        renderUsersTable();        showToast('Данные сотрудника обновлены');
+
       }
 
       let currentDetailEmail = null;
