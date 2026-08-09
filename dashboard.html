@@ -1373,94 +1373,75 @@
       }
 
 
-  async function saveTest() {
-  const mod = contentData[currentModuleKey];
-  const step = mod.steps[currentStepIndex];
+        async function saveTest() {
+        const mod = contentData[currentModuleKey];
+        const step = mod.steps[currentStepIndex];
 
-  const questions = [];
-  const questionBlocks = document.querySelectorAll('#questionsEditList .q-edit-block');
+        const questions = [];
+        const questionBlocks = document.querySelectorAll('#questionsEditList .q-edit-block');
 
-  questionBlocks.forEach((block, qIdx) => {
-    const qText = block.querySelector('.q-input').value.trim();
-    if (!qText) return; // пропускаем пустой вопрос
-    
-    const type = block.querySelector('.q-type-select').value;
+        questionBlocks.forEach((block) => {
+          const qText = block.querySelector('.q-input').value.trim();
+          if (!qText) return; // пропускаем пустой вопрос
 
-    if (type === 'single') {
-      const optionEls = block.querySelectorAll('.opt-input');
-      const options = Array.from(optionEls).map(i => i.value.trim());
-      const correctRadio = block.querySelector('.opt-correct-input:checked');
-      const correct = correctRadio ? parseInt(correctRadio.value) : 0;
-      questions.push({ type, q: qText, options, correct });
-    }
+          const type = block.querySelector('.q-type-select').value;
 
-    if (type === 'multiple') {
-      const checkboxes = block.querySelectorAll('.opt-correct-input:checked');
-      const selectedAnswers = Array.from(checkboxes).map(c => parseInt(c.value)).sort((a,b)=>a-b);
-      const correctAnswers = ( (typeof q.correct === 'object' && Array.isArray(q.correct))
-                                  ? q.correct.slice()
-                                  : [])
-                                  .slice()
-                                  .sort((a,b)=>a-b);
-      questions.push({ type, q: qText, options: Array.from(block.querySelectorAll('.opt-input')).map(i=>i.value.trim()), correct: correctAnswers, selected: selectedAnswers });
-    }
+          if (type === 'single') {
+            const optionEls = block.querySelectorAll('.opt-input');
+            const options = Array.from(optionEls).map(i => i.value.trim());
+            const correctRadio = block.querySelector('.opt-correct-input:checked');
+            const correct = correctRadio ? parseInt(correctRadio.value) : 0;
+            questions.push({ type, q: qText, options, correct });
+          }
 
-    if (type === 'matching') {
-      const pairs = [];
-      const matchRows = block.querySelectorAll('.match-row');
-      matchRows.forEach((row, pi) => {
-        const left = row.querySelector('.match-left-input').value.trim();
-        const right = row.querySelector('.match-right-input').value.trim();
-        if (left && right) pairs.push({ left, right });
-      });
-      questions.push({ type, q: qText, pairs });
-    }
+          if (type === 'multiple') {
+            const optionEls = block.querySelectorAll('.opt-input');
+            const options = Array.from(optionEls).map(i => i.value.trim());
+            const checkboxes = block.querySelectorAll('.opt-correct-input:checked');
+            const correct = Array.from(checkboxes).map(c => parseInt(c.value)).sort((a,b)=>a-b);
+            questions.push({ type, q: qText, options, correct });
+          }
 
-    if (type === 'ordering') {
-      const orderedItems = [];
-      const rows = block.querySelectorAll('.order-row');
-      rows.forEach((row) => {
-        const itemText = row.querySelector('.order-item-input').value.trim();
-        if (itemText) {
-          const origIdx = parseInt(row.dataset.origIndex);
-          orderedItems.push({ text: itemText, origIndex: origIdx });
+          if (type === 'matching') {
+            const pairs = [];
+            const matchRows = block.querySelectorAll('.match-row');
+            matchRows.forEach((row) => {
+              const left = row.querySelector('.match-left-input').value.trim();
+              const right = row.querySelector('.match-right-input').value.trim();
+              if (left && right) pairs.push({ left, right });
+            });
+            questions.push({ type, q: qText, pairs });
+          }
+
+          if (type === 'ordering') {
+            const items = [];
+            const rows = block.querySelectorAll('.order-row');
+            rows.forEach((row) => {
+              const itemText = row.querySelector('.order-item-input').value.trim();
+              if (itemText) items.push(itemText);
+            });
+            questions.push({ type, q: qText, items });
+          }
+        });
+
+        const title = document.getElementById('testStepTitleInput').value.trim();
+        const passScore = parseInt(document.getElementById('testPassScoreInput').value) || 80;
+
+        if (title) step.title = title;
+        step.passScore = passScore;
+        step.questions = questions;
+
+        try {
+          await setDoc(doc(db, 'content', currentModuleKey), mod);
+          closeModal('modalTest');
+          renderModuleStages(currentModuleKey);
+          renderOverview();
+          showToast('Тест сохранён');
+        } catch (err) {
+          console.error('Ошибка сохранения теста', err);
+          alert('Не удалось сохранить тест: ' + (err.message || 'неизвестная ошибка'));
         }
-      });
-      questions.push({ type, q: qText, items: orderedItems.map(i => i.text) });
-    }
-  });
-
-  // Обновляем вопрос в Step
-  if (questions.length > 0) {
-    step.questions = questions;
-  }
-
-    console.log('Отправляем:', contentData[currentModuleKey]);
-
- // Обновляете questions внутри объекта, который собирается отправить
-contentData[currentModuleKey].steps[currentStepIndex].questions = questions;
-
-// Проверка структуры после обновления
-console.log('Обновленная структура с вопросами:', contentData[currentModuleKey]);
-
-// Отправляете в Firestore именно этот объект
-await try {
-  await setDoc(doc(db, 'content', currentModuleKey), contentData[currentModuleKey]);
-  console.log('Документ успешно сохранён');
-} catch (err) {
-  console.error('Ошибка сохранения', err);
-}
-
-// После этого вызываете рендер, отладку и т.п.
-closeModal('modalTest');
-renderModuleStages(currentModuleKey);
-console.log('После рендера:', contentData[currentModuleKey]);
-
-renderOverview();
-
-showToast('Тест сохранён');
-
-}
+      }
 
 
 
