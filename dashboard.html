@@ -695,12 +695,6 @@
         }
       }
 
-      function escapeHtml(str) {
-        const div = document.createElement('div');
-        div.textContent = str || '';
-        return div.innerHTML;
-      }
-
       function sortedModuleKeys() {
         return Object.keys(contentData).sort((a,b) => (contentData[a].order||0) - (contentData[b].order||0));
       }
@@ -731,7 +725,7 @@
           document.getElementById('topbarTitle').textContent = 'Личный кабинет';
         });
 
-               document.getElementById('addModuleBtn').addEventListener('click', async () => {
+          document.getElementById('addModuleBtn').addEventListener('click', async () => {
           const key = prompt('Введите короткий идентификатор оборудования (латиницей, без пробелов), например: kotlety');
           if (!key) return;
           if (contentData[key]) { alert('Такой идентификатор уже существует'); return; }
@@ -752,13 +746,6 @@
           showToast('Оборудование добавлено! Откройте его в меню слева, чтобы добавить шаги обучения.');
         });
 
-          await setDoc(doc(db, 'content', key), newModule);
-          contentData[key] = newModule;
-          renderSidebar();
-          renderOverview();
-         showToast('Оборудование добавлено! Откройте его в меню слева, чтобы добавить шаги обучения.');
-
-        });
 
         document.getElementById('editModuleInfoBtn').addEventListener('click', () => openModuleInfoModal(currentModuleKey));
         document.getElementById('saveModuleInfoBtn').addEventListener('click', saveModuleInfo);
@@ -824,6 +811,7 @@
 
         const saveEditUserBtn = document.getElementById('saveEditUserBtn');
         if (saveEditUserBtn) saveEditUserBtn.addEventListener('click', saveEditedUser);
+      }
       }
 
       function getModuleProgress(key) {
