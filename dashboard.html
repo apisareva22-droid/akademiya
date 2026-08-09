@@ -1244,7 +1244,7 @@
           ['multiple','Несколько правильных ответов'],
           ['matching','Сопоставление (соотнести пары)'],
           ['ordering','Правильный порядок (последовательность)']
-        ].map(([val,label]) => `<option value="{val}" ${q.type===val?'selected':''}>${label}</option>`).join('');
+        ].map(([val,label]) => `<option value="${val}" ${q.type===val?'selected':''}>${label}</option>`).join('');
 
 
         let bodyHtml = '';
