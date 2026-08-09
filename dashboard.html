@@ -1191,17 +1191,24 @@
 
       }
 
-      async function saveStepEditor() {
+          async function saveStepEditor() {
         const mod = contentData[currentModuleKey];
         const step = mod.steps[currentStepIndex];
         step.title = document.getElementById('stepTitleInput').value.trim() || step.title;
         step.html = document.getElementById('stepContentEditor').innerHTML;
-        await setDoc(doc(db, 'content', currentModuleKey), mod);
-        closeModal('modalStepEditor');
-        renderModuleStages(currentModuleKey);
-        renderOverview();        showToast('Шаг добавлен');
 
+        try {
+          await setDoc(doc(db, 'content', currentModuleKey), mod);
+          closeModal('modalStepEditor');
+          renderModuleStages(currentModuleKey);
+          renderOverview();
+          showToast('Шаг сохранён');
+        } catch (err) {
+          console.error('Ошибка сохранения шага', err);
+          alert('Не удалось сохранить шаг: ' + (err.message || 'неизвестная ошибка'));
+        }
       }
+
 
       async function deleteStepByIndex(idx, modalIdToClose) {
         if (idx === null || idx === undefined) return;
