@@ -1435,6 +1435,8 @@
     step.questions = questions;
   }
 
+    console.log('Отправляем:', contentData[currentModuleKey]);
+
  // Обновляете questions внутри объекта, который собирается отправить
 contentData[currentModuleKey].steps[currentStepIndex].questions = questions;
 
@@ -1442,7 +1444,12 @@ contentData[currentModuleKey].steps[currentStepIndex].questions = questions;
 console.log('Обновленная структура с вопросами:', contentData[currentModuleKey]);
 
 // Отправляете в Firestore именно этот объект
-await setDoc(doc(db, 'content', currentModuleKey), contentData[currentModuleKey]);
+await try {
+  await setDoc(doc(db, 'content', currentModuleKey), contentData[currentModuleKey]);
+  console.log('Документ успешно сохранён');
+} catch (err) {
+  console.error('Ошибка сохранения', err);
+}
 
 // После этого вызываете рендер, отладку и т.п.
 closeModal('modalTest');
