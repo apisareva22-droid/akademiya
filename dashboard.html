@@ -478,7 +478,8 @@
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
       import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
-      import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+      import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
 
       const firebaseConfig = {
         apiKey: "AIzaSyD4BRDmQtttfw4xKSyhYT10Q3mXJmB9nkQ",
@@ -610,7 +611,8 @@
         document.getElementById('overviewRole').textContent = userData.role || 'Сотрудник';
       }
 
-      function migrateModuleToSteps(mod) {
+           function migrateModuleToSteps(mod) {
+        // Оставляем как есть — служит только для миграции самого старого формата (theory+test)
         if (mod.steps && Array.isArray(mod.steps)) return mod;
         const steps = [];
         if (mod.theory) {
@@ -634,18 +636,69 @@
         return div.innerHTML;
       }
 
+      // Загружает шаги оборудования из подколлекции content/{key}/steps
+      async function loadStepsForModule(key) {
+        const snap = await getDocs(collection(db, 'content', key, 'steps'));
+        const steps = [];
+        snap.forEach((d) => steps.push({ id: d.id, ...d.data() }));
+        steps.sort((a,b) => (a.order||0) - (b.order||0));
+        return steps;
+      }
+
+      // Мигрирует шаги, если они лежат старым способом прямо в поле mod.steps (массив),
+      // переносит их в подколлекцию content/{key}/steps — по одному документу на шаг.
+      // Ничего не удаляет, пока перенос не завершится успешно.
+      async function migrateInlineStepsToSubcollection(key, mod) {
+        if (!mod.steps || !Array.isArray(mod.steps) || mod.steps.length === 0) return;
+        const batch = writeBatch(db);
+        mod.steps.forEach((step, i) => {
+          const stepId = step.id || ('step_' + Math.random().toString(36).slice(2,9));
+          const stepData = { ...step };
+          delete stepData.id;
+          stepData.order = i;
+          batch.set(doc(db, 'content', key, 'steps', stepId), stepData);
+        });
+        await batch.commit();
+        // После успешного переноса убираем старое поле steps из самого документа оборудования,
+        // чтобы больше никогда не упереться в лимит 1 МБ.
+        const cleanMod = { title: mod.title, icon: mod.icon, order: mod.order || 0 };
+        await setDoc(doc(db, 'content', key), cleanMod);
+      }
+
       async function loadContent() {
         const snap = await getDocs(collection(db, 'content'));
         contentData = {};
-        snap.forEach((d) => { contentData[d.id] = migrateModuleToSteps(d.data()); });
+
+        for (const d of snap.docs) {
+          const key = d.id;
+          let mod = d.data();
+          mod = migrateModuleToSteps(mod); // старый theory/test -> mod.steps (в памяти, для миграции ниже)
+
+          // Если у документа оборудования всё ещё есть встроенный массив steps — переносим его в подколлекцию
+          if (mod.steps && Array.isArray(mod.steps) && mod.steps.length > 0) {
+            await migrateInlineStepsToSubcollection(key, mod);
+          }
+
+          const steps = await loadStepsForModule(key);
+          contentData[key] = { title: mod.title, icon: mod.icon, order: mod.order || 0, steps };
+        }
 
         if (Object.keys(contentData).length === 0 && isAdmin) {
           for (const key of Object.keys(DEFAULT_CONTENT)) {
             const migrated = migrateModuleToSteps(JSON.parse(JSON.stringify(DEFAULT_CONTENT[key])));
-            await setDoc(doc(db, 'content', key), migrated);
-            contentData[key] = migrated;
+            const cleanMod = { title: migrated.title, icon: migrated.icon, order: migrated.order || 0 };
+            await setDoc(doc(db, 'content', key), cleanMod);
+            await migrateInlineStepsToSubcollection(key, migrated);
+            const steps = await loadStepsForModule(key);
+            contentData[key] = { title: cleanMod.title, icon: cleanMod.icon, order: cleanMod.order, steps };
           }
         }
+      }
+
+      function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str || '';
+        return div.innerHTML;
       }
 
       function sortedModuleKeys() {
@@ -678,7 +731,7 @@
           document.getElementById('topbarTitle').textContent = 'Личный кабинет';
         });
 
-        document.getElementById('addModuleBtn').addEventListener('click', async () => {
+               document.getElementById('addModuleBtn').addEventListener('click', async () => {
           const key = prompt('Введите короткий идентификатор оборудования (латиницей, без пробелов), например: kotlety');
           if (!key) return;
           if (contentData[key]) { alert('Такой идентификатор уже существует'); return; }
@@ -686,12 +739,19 @@
           if (!title) return;
           const icon = prompt('Введите emoji-иконку', '📦') || '📦';
           const newOrder = sortedModuleKeys().length + 1;
-          const newModule = {
-            title, icon, order: newOrder,
-            steps: [
-              { id: 'step_' + Math.random().toString(36).slice(2,9), type: 'theory', title: 'Введение', html: '<p>Опишите теорию по этому оборудованию...</p>' }
-            ]
-          };
+
+          await setDoc(doc(db, 'content', key), { title, icon, order: newOrder });
+          const firstStepId = 'step_' + Math.random().toString(36).slice(2,9);
+          await setDoc(doc(db, 'content', key, 'steps', firstStepId), {
+            type: 'theory', title: 'Введение', html: '<p>Опишите теорию по этому оборудованию...</p>', order: 0
+          });
+
+          contentData[key] = { title, icon, order: newOrder, steps: [{ id: firstStepId, type: 'theory', title: 'Введение', html: '<p>Опишите теорию по этому оборудованию...</p>', order: 0 }] };
+          renderSidebar();
+          renderOverview();
+          showToast('Оборудование добавлено! Откройте его в меню слева, чтобы добавить шаги обучения.');
+        });
+
           await setDoc(doc(db, 'content', key), newModule);
           contentData[key] = newModule;
           renderSidebar();
@@ -1114,24 +1174,35 @@
         document.getElementById('newStepTitleInput').value = '';
         openModal('modalAddStep');
       }
-      async function confirmAddStep() {
+           async function confirmAddStep() {
         const title = document.getElementById('newStepTitleInput').value.trim();
         if (!title) { alert('Введите название шага'); return; }
         const mod = contentData[currentModuleKey];
         if (!mod.steps) mod.steps = [];
-        const newStep = selectedNewStepType === 'theory'
-          ? { id: 'step_' + Math.random().toString(36).slice(2,9), type: 'theory', title, html: '<p>Опишите содержимое этого шага...</p>' }
-          : { id: 'step_' + Math.random().toString(36).slice(2,9), type: 'test', title, passScore: 80, questions: [] };
-        mod.steps.push(newStep);
-        await setDoc(doc(db, 'content', currentModuleKey), mod);
-        closeModal('modalAddStep');
-        renderModuleStages(currentModuleKey);
-        renderOverview();
-        const newIdx = mod.steps.length - 1;
-        if (newStep.type === 'theory') openStepEditorModal(newIdx); else openTestModal(newIdx);
-                showToast('Шаг добавлен');
 
+        const stepId = 'step_' + Math.random().toString(36).slice(2,9);
+        const order = mod.steps.length;
+        const newStep = selectedNewStepType === 'theory'
+          ? { id: stepId, type: 'theory', title, html: '<p>Опишите содержимое этого шага...</p>', order }
+          : { id: stepId, type: 'test', title, passScore: 80, questions: [], order };
+
+        try {
+          const stepData = { ...newStep };
+          delete stepData.id;
+          await setDoc(doc(db, 'content', currentModuleKey, 'steps', stepId), stepData);
+          mod.steps.push(newStep);
+          closeModal('modalAddStep');
+          renderModuleStages(currentModuleKey);
+          renderOverview();
+          showToast('Шаг добавлен');
+          const newIdx = mod.steps.length - 1;
+          if (newStep.type === 'theory') openStepEditorModal(newIdx); else openTestModal(newIdx);
+        } catch (err) {
+          console.error('Ошибка добавления шага', err);
+          alert('Не удалось добавить шаг: ' + (err.message || 'неизвестная ошибка'));
+        }
       }
+
 
       function openStepEditorModal(idx) {
         currentStepIndex = idx;
@@ -1198,7 +1269,8 @@
         step.html = document.getElementById('stepContentEditor').innerHTML;
 
         try {
-          await setDoc(doc(db, 'content', currentModuleKey), mod);
+          const stepData = { type: step.type, title: step.title, html: step.html, order: step.order ?? currentStepIndex };
+          await setDoc(doc(db, 'content', currentModuleKey, 'steps', step.id), stepData);
           closeModal('modalStepEditor');
           renderModuleStages(currentModuleKey);
           renderOverview();
@@ -1210,17 +1282,23 @@
       }
 
 
-      async function deleteStepByIndex(idx, modalIdToClose) {
+
+           async function deleteStepByIndex(idx, modalIdToClose) {
         if (idx === null || idx === undefined) return;
         if (!confirm('Удалить этот шаг безвозвратно?')) return;
         const mod = contentData[currentModuleKey];
-        mod.steps.splice(idx, 1);
-        await setDoc(doc(db, 'content', currentModuleKey), mod);
-        closeModal(modalIdToClose);
-        renderModuleStages(currentModuleKey);
-        renderOverview();               showToast('Шаг удалён');
-
-
+        const step = mod.steps[idx];
+        try {
+          await deleteDoc(doc(db, 'content', currentModuleKey, 'steps', step.id));
+          mod.steps.splice(idx, 1);
+          closeModal(modalIdToClose);
+          renderModuleStages(currentModuleKey);
+          renderOverview();
+          showToast('Шаг удалён');
+        } catch (err) {
+          console.error('Ошибка удаления шага', err);
+          alert('Не удалось удалить шаг: ' + (err.message || 'неизвестная ошибка'));
+        }
       }
 
       function openTestModal(idx) {
@@ -1380,7 +1458,7 @@
       }
 
 
-        async function saveTest() {
+            async function saveTest() {
         const mod = contentData[currentModuleKey];
         const step = mod.steps[currentStepIndex];
 
@@ -1389,8 +1467,7 @@
 
         questionBlocks.forEach((block) => {
           const qText = block.querySelector('.q-input').value.trim();
-          if (!qText) return; // пропускаем пустой вопрос
-
+          if (!qText) return;
           const type = block.querySelector('.q-type-select').value;
 
           if (type === 'single') {
@@ -1439,7 +1516,8 @@
         step.questions = questions;
 
         try {
-          await setDoc(doc(db, 'content', currentModuleKey), mod);
+          const stepData = { type: 'test', title: step.title, passScore: step.passScore, questions: step.questions, order: step.order ?? currentStepIndex };
+          await setDoc(doc(db, 'content', currentModuleKey, 'steps', step.id), stepData);
           closeModal('modalTest');
           renderModuleStages(currentModuleKey);
           renderOverview();
@@ -1459,31 +1537,45 @@
         openModal('modalModuleInfo');
       }
 
-      async function saveModuleInfo() {
+          async function saveModuleInfo() {
         const mod = contentData[currentModuleKey];
         mod.icon = document.getElementById('moduleIconInput').value || '📦';
         mod.title = document.getElementById('moduleTitleInput').value || mod.title;
-        await setDoc(doc(db, 'content', currentModuleKey), mod);
-        closeModal('modalModuleInfo');
-        renderSidebar();
-        openModule(currentModuleKey);
-        renderOverview();               showToast('Оборудование обновлено');
-
-
+        try {
+          await setDoc(doc(db, 'content', currentModuleKey), { title: mod.title, icon: mod.icon, order: mod.order || 0 });
+          closeModal('modalModuleInfo');
+          renderSidebar();
+          openModule(currentModuleKey);
+          renderOverview();
+          showToast('Оборудование обновлено');
+        } catch (err) {
+          console.error('Ошибка обновления оборудования', err);
+          alert('Не удалось сохранить: ' + (err.message || 'неизвестная ошибка'));
+        }
       }
 
       async function deleteCurrentModule() {
-        if (!confirm('Удалить это оборудование безвозвратно?')) return;
-        await deleteDoc(doc(db, 'content', currentModuleKey));
-        delete contentData[currentModuleKey];
-        closeModal('modalModuleInfo');
-        renderSidebar();
-        switchView('overview');
-        document.getElementById('topbarTitle').textContent = 'Личный кабинет';
-        document.querySelector('.nav-item[data-view="overview"]').classList.add('active');
-        renderOverview();        showToast('Оборудование удалено');
-
+        if (!confirm('Удалить это оборудование безвозвратно? Все шаги также будут удалены.')) return;
+        try {
+          const stepsSnap = await getDocs(collection(db, 'content', currentModuleKey, 'steps'));
+          const batch = writeBatch(db);
+          stepsSnap.forEach((d) => batch.delete(d.ref));
+          await batch.commit();
+          await deleteDoc(doc(db, 'content', currentModuleKey));
+          delete contentData[currentModuleKey];
+          closeModal('modalModuleInfo');
+          renderSidebar();
+          switchView('overview');
+          document.getElementById('topbarTitle').textContent = 'Личный кабинет';
+          document.querySelector('.nav-item[data-view="overview"]').classList.add('active');
+          renderOverview();
+          showToast('Оборудование удалено');
+        } catch (err) {
+          console.error('Ошибка удаления оборудования', err);
+          alert('Не удалось удалить оборудование: ' + (err.message || 'неизвестная ошибка'));
+        }
       }
+
 
       let allUsersCache = {};
       let editingUserEmail = null;
