@@ -901,7 +901,7 @@
         if (type === 'multiple') {
           let optsHtml = '';
           (q.options || []).forEach((opt, oi) => {
-            optsHtml += `<label class="option"><input type="radio" name="q-{idx}-${qi}" value="${oi}" />${escapeHtml(opt)}</label>`;
+            optsHtml += `<label class="option"><input type="checkbox" name="q-{idx}-${qi}" value="${oi}" />${escapeHtml(opt)}</label>`;
 
           });
           return `<div class="question"><p>${qi+1}. ${escapeHtml(q.q)} <span style="font-weight:400;color:var(--text-light);font-size:12px;">(выберите все верные варианты)</span></p>${optsHtml}</div>`;
@@ -1391,13 +1391,14 @@
             questions.push({ type, q: qText, options, correct });
           }
 
-          if (type === 'multiple') {
-            const optInputs = block.querySelectorAll('.opt-input');
-            const options = Array.from(optInputs).map(i => i.value.trim());
-            const correctChecks = block.querySelectorAll('.opt-correct-input:checked');
-            const correct = Array.from(correctChecks).map(c => parseInt(c.value));
-            questions.push({ type, q: qText, options, correct });
-          }
+         if (type === 'multiple') {
+  const checked = e.target.querySelectorAll(`input[name="q-{idx}-${qi}"]:checked`);
+  const selectedVals = Array.from(checked).map(c => parseInt(c.value)).sort((a,b)=>a-b);
+  const correctVals = (q.correct || []).slice().sort((a,b)=>a-b);
+  const isEqual = selectedVals.length === correctVals.length && selectedVals.every((v,i) => v === correctVals[i]);
+  if (isEqual) correctCount++;
+}
+
 
           if (type === 'matching') {
             const rows = block.querySelectorAll('.match-row');
