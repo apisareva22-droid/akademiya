@@ -899,7 +899,8 @@
         if (type === 'multiple') {
           let optsHtml = '';
           (q.options || []).forEach((opt, oi) => {
-            optsHtml += `<label class="option"><input type="checkbox" name="q-${idx}-${qi}" value="${oi}" />${escapeHtml(opt)}</label>`;
+            optsHtml += `<label class="option"><input type="radio" name="q-{idx}-${qi}" value="${oi}" />${escapeHtml(opt)}</label>`;
+
           });
           return `<div class="question"><p>${qi+1}. ${escapeHtml(q.q)} <span style="font-weight:400;color:var(--text-light);font-size:12px;">(выберите все верные варианты)</span></p>${optsHtml}</div>`;
         }
@@ -964,7 +965,7 @@
             card.innerHTML = `
               <div class="stage-top-row">
                 <div style="flex:1;">
-                  <span class="stage-tag">Шаг ${idx+1} · Теория</span>
+                  <span class="stage-tag">Шаг {idx+1} · Теория</span>
                   <h3>${escapeHtml(step.title || '')}</h3>
                 </div>
                 ${isAdmin ? `<div class="step-header-actions"><button class="edit-pencil" data-edit-step="${idx}" title="Редактировать">✏️</button></div>` : ''}
@@ -975,8 +976,6 @@
             const passed = !!stepProg.passed;
             const bestScore = stepProg.score || 0;
             let questionsHtml = '';
-            (step.questions || []).forEach((q, qi) => {
-                         let questionsHtml = '';
             (step.questions || []).forEach((q, qi) => {
               questionsHtml += renderQuestionHtml(q, idx, qi);
             });
@@ -1015,7 +1014,8 @@
             renderOverview();
           });
         });
-                container.querySelectorAll('.order-up-btn').forEach((btn) => {
+
+        container.querySelectorAll('.order-up-btn').forEach((btn) => {
           btn.addEventListener('click', () => {
             const row = btn.closest('.order-row');
             const prev = row.previousElementSibling;
@@ -1034,13 +1034,14 @@
           const idx = parseInt(form.dataset.testForm);
           form.addEventListener('submit', async (e) => {
             e.preventDefault();
-                        const questions = step.questions || [];
+            const step = mod.steps[idx];
+            const questions = step.questions || [];
             let correctCount = 0;
             questions.forEach((q, qi) => {
               const type = q.type || 'single';
 
               if (type === 'single') {
-                const selected = e.target.querySelector(`input[name="q-{idx}-${qi}"]:checked`);
+                const selected = e.target.querySelector(`input[name="q-${idx}-${qi}"]:checked`);
                 if (selected && parseInt(selected.value) === q.correct) correctCount++;
               }
 
@@ -1072,7 +1073,6 @@
               }
             });
 
-            });
             const score = questions.length ? Math.round((correctCount / questions.length) * 100) : 0;
             const passResult = score >= (step.passScore || 80);
 
@@ -1091,21 +1091,6 @@
           });
         });
       }
-
-            function showToast(message, type) {
-        type = type || 'success';
-        const container = document.getElementById('toastContainer');
-        const toast = document.createElement('div');
-        toast.className = 'toast ' + type;
-        toast.textContent = (type === 'success' ? '✓ ' : '⚠ ') + message;
-        container.appendChild(toast);
-        requestAnimationFrame(() => toast.classList.add('show'));
-        setTimeout(() => {
-          toast.classList.remove('show');
-          setTimeout(() => toast.remove(), 300);
-        }, 3000);
-      }
-
 
 
       async function saveProgress() {
@@ -1260,6 +1245,7 @@
           ['matching','Сопоставление (соотнести пары)'],
           ['ordering','Правильный порядок (последовательность)']
         ].map(([val,label]) => `<option value="{val}" ${q.type===val?'selected':''}>${label}</option>`).join('');
+
 
         let bodyHtml = '';
 
