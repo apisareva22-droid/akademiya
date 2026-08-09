@@ -893,7 +893,7 @@
         if (type === 'single') {
           let optsHtml = '';
           (q.options || []).forEach((opt, oi) => {
-            optsHtml += `<label class="option"><input type="radio" name="q-{idx}-${qi}" value="${oi}" />${escapeHtml(opt)}</label>`;
+            optsHtml += `<label class="option"><input type="radio" name="q-${idx}-${qi}" value="${oi}" />${escapeHtml(opt)}</label>`;
           });
           return `<div class="question"><p>${qi+1}. ${escapeHtml(q.q)}</p>${optsHtml}</div>`;
         }
@@ -901,7 +901,7 @@
         if (type === 'multiple') {
           let optsHtml = '';
           (q.options || []).forEach((opt, oi) => {
-            optsHtml += `<label class="option"><input type="checkbox" name="q-{idx}-${qi}" value="${oi}" />${escapeHtml(opt)}</label>`;
+            optsHtml += `<label class="option"><input type="checkbox" name="q-${idx}-${qi}" value="${oi}" />${escapeHtml(opt)}</label>`;
 
           });
           return `<div class="question"><p>${qi+1}. ${escapeHtml(q.q)} <span style="font-weight:400;color:var(--text-light);font-size:12px;">(выберите все верные варианты)</span></p>${optsHtml}</div>`;
@@ -1371,61 +1371,76 @@
       }
 
 
-      async function saveTest() {
-        const mod = contentData[currentModuleKey];
-        const step = mod.steps[currentStepIndex];
-        const title = document.getElementById('testStepTitleInput').value.trim();
-        const passScore = parseInt(document.getElementById('testPassScoreInput').value) || 80;
-        const blocks = document.querySelectorAll('#questionsEditList .q-edit-block');
-        const questions = [];
-        blocks.forEach((block) => {
-          const qText = block.querySelector('.q-input').value.trim();
-          if (!qText) return;
-          const type = block.querySelector('.q-type-select').value;
+  async function saveTest() {
+  const mod = contentData[currentModuleKey];
+  const step = mod.steps[currentStepIndex];
 
-          if (type === 'single') {
-            const optInputs = block.querySelectorAll('.opt-input');
-            const options = Array.from(optInputs).map(i => i.value.trim());
-            const correctRadio = block.querySelector('.opt-correct-input:checked');
-            const correct = correctRadio ? parseInt(correctRadio.value) : 0;
-            questions.push({ type, q: qText, options, correct });
-          }
+  const questions = [];
+  const questionBlocks = document.querySelectorAll('#questionsEditList .q-edit-block');
 
-         if (type === 'multiple') {
-  const checked = e.target.querySelectorAll(`input[name="q-{idx}-${qi}"]:checked`);
-  const selectedVals = Array.from(checked).map(c => parseInt(c.value)).sort((a,b)=>a-b);
-  const correctVals = (q.correct || []).slice().sort((a,b)=>a-b);
-  const isEqual = selectedVals.length === correctVals.length && selectedVals.every((v,i) => v === correctVals[i]);
-  if (isEqual) correctCount++;
+  questionBlocks.forEach((block, qIdx) => {
+    const qText = block.querySelector('.q-input').value.trim();
+    if (!qText) return; // пропускаем пустой вопрос
+    
+    const type = block.querySelector('.q-type-select').value;
+
+    if (type === 'single') {
+      const optionEls = block.querySelectorAll('.opt-input');
+      const options = Array.from(optionEls).map(i => i.value.trim());
+      const correctRadio = block.querySelector('.opt-correct-input:checked');
+      const correct = correctRadio ? parseInt(correctRadio.value) : 0;
+      questions.push({ type, q: qText, options, correct });
+    }
+
+    if (type === 'multiple') {
+      const checkboxes = block.querySelectorAll('.opt-correct-input:checked');
+      const selectedAnswers = Array.from(checkboxes).map(c => parseInt(c.value)).sort((a,b)=>a-b);
+      const correctAnswers = ( (typeof q.correct === 'object' && Array.isArray(q.correct))
+                                  ? q.correct.slice()
+                                  : [])
+                                  .slice()
+                                  .sort((a,b)=>a-b);
+      questions.push({ type, q: qText, options: Array.from(block.querySelectorAll('.opt-input')).map(i=>i.value.trim()), correct: correctAnswers, selected: selectedAnswers });
+    }
+
+    if (type === 'matching') {
+      const pairs = [];
+      const matchRows = block.querySelectorAll('.match-row');
+      matchRows.forEach((row, pi) => {
+        const left = row.querySelector('.match-left-input').value.trim();
+        const right = row.querySelector('.match-right-input').value.trim();
+        if (left && right) pairs.push({ left, right });
+      });
+      questions.push({ type, q: qText, pairs });
+    }
+
+    if (type === 'ordering') {
+      const orderedItems = [];
+      const rows = block.querySelectorAll('.order-row');
+      rows.forEach((row) => {
+        const itemText = row.querySelector('.order-item-input').value.trim();
+        if (itemText) {
+          const origIdx = parseInt(row.dataset.origIndex);
+          orderedItems.push({ text: itemText, origIndex: origIdx });
+        }
+      });
+      questions.push({ type, q: qText, items: orderedItems.map(i => i.text) });
+    }
+  });
+
+  // Обновляем вопрос в Step
+  if (questions.length > 0) {
+    step.questions = questions;
+  }
+
+  await setDoc(doc(db, 'content', currentModuleKey), mod);
+  closeModal('modalTest');
+  renderModuleStages(currentModuleKey);
+  renderOverview();
+
+  showToast('Тест сохранён');
 }
 
-
-          if (type === 'matching') {
-            const rows = block.querySelectorAll('.match-row');
-            const pairs = [];
-            rows.forEach((row) => {
-              const left = row.querySelector('.match-left-input').value.trim();
-              const right = row.querySelector('.match-right-input').value.trim();
-              if (left && right) pairs.push({ left, right });
-            });
-            questions.push({ type, q: qText, pairs });
-          }
-
-          if (type === 'ordering') {
-            const rows = block.querySelectorAll('.order-row');
-            const items = Array.from(rows).map(r => r.querySelector('.order-item-input').value.trim()).filter(v => v);
-            questions.push({ type, q: qText, items });
-          }
-        });
-        if (title) step.title = title;
-        step.passScore = passScore;
-        step.questions = questions;
-        await setDoc(doc(db, 'content', currentModuleKey), mod);
-        closeModal('modalTest');
-        renderModuleStages(currentModuleKey);
-        renderOverview();
-        showToast('Тест сохранён');
-      }
 
 
       function openModuleInfoModal(key) {
