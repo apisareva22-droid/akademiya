@@ -214,6 +214,18 @@
       .toast.success{border-left-color:#2ea043; color:#1e7a34;}
       .toast.error{border-left-color:#c0362c; color:#c0362c;}
 
+            .q-type-select{width:100%; padding:9px 10px; border-radius:8px; border:1.5px solid var(--gray-line); background:var(--gray-bg); font-size:13.5px; font-weight:600; margin-bottom:12px;}
+      .match-row, .order-row{display:flex; align-items:center; gap:8px; margin-bottom:8px;}
+      .match-row input, .order-row input{flex:1;}
+      .match-row .arrow{color:var(--text-light); font-weight:700;}
+      .order-row .order-num{width:26px; height:26px; border-radius:50%; background:var(--orange); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; flex-shrink:0;}
+      .remove-row-btn{background:none; border:none; color:#c0362c; cursor:pointer; font-size:16px; flex-shrink:0;}
+      .add-row-btn{margin-top:4px;}
+      .match-select{width:100%; padding:9px 10px; border-radius:8px; border:1.5px solid var(--gray-line); background:#fff; font-size:13.5px;}
+      .order-nav-btn{width:28px; height:28px; border:1px solid var(--gray-line); background:#fff; border-radius:6px; cursor:pointer; font-size:12px; color:var(--navy);}
+      .order-nav-btn:hover{background:var(--orange); color:#fff; border-color:var(--orange);}
+
+
     </style>
     
   </head>
@@ -864,6 +876,69 @@
         return true;
       }
 
+      function shuffleArray(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      function renderQuestionHtml(q, idx, qi) {
+        const type = q.type || 'single';
+
+        if (type === 'single') {
+          let optsHtml = '';
+          (q.options || []).forEach((opt, oi) => {
+            optsHtml += `<label class="option"><input type="radio" name="q-{idx}-${qi}" value="${oi}" />${escapeHtml(opt)}</label>`;
+          });
+          return `<div class="question"><p>${qi+1}. ${escapeHtml(q.q)}</p>${optsHtml}</div>`;
+        }
+
+        if (type === 'multiple') {
+          let optsHtml = '';
+          (q.options || []).forEach((opt, oi) => {
+            optsHtml += `<label class="option"><input type="checkbox" name="q-${idx}-${qi}" value="${oi}" />${escapeHtml(opt)}</label>`;
+          });
+          return `<div class="question"><p>${qi+1}. ${escapeHtml(q.q)} <span style="font-weight:400;color:var(--text-light);font-size:12px;">(выберите все верные варианты)</span></p>${optsHtml}</div>`;
+        }
+
+        if (type === 'matching') {
+          const pairs = q.pairs || [];
+          const rightOptions = shuffleArray(pairs.map(p => p.right));
+          let rowsHtml = '';
+          pairs.forEach((p, pi) => {
+            let optionsHtml = '<option value="">— выберите —</option>';
+            rightOptions.forEach((r) => { optionsHtml += `<option value="${escapeHtml(r)}">${escapeHtml(r)}</option>`; });
+            rowsHtml += `
+              <div class="match-row">
+                <span style="flex:1;">${escapeHtml(p.left)}</span>
+                <span class="arrow">→</span>
+                <select class="match-select" data-q="${idx}-${qi}" data-pair-index="${pi}">${optionsHtml}</select>
+              </div>`;
+          });
+          return `<div class="question"><p>${qi+1}. ${escapeHtml(q.q)}</p>${rowsHtml}</div>`;
+        }
+
+        if (type === 'ordering') {
+          const shuffled = shuffleArray((q.items || []).map((text, origIndex) => ({ text, origIndex })));
+          let rowsHtml = '';
+          shuffled.forEach((item) => {
+            rowsHtml += `
+              <div class="order-row" data-orig-index="${item.origIndex}">
+                <span style="flex:1;">${escapeHtml(item.text)}</span>
+                <button type="button" class="order-nav-btn order-up-btn" title="Вверх">▲</button>
+                <button type="button" class="order-nav-btn order-down-btn" title="Вниз">▼</button>
+              </div>`;
+          });
+          return `<div class="question" data-q="${idx}-${qi}"><p>${qi+1}. ${escapeHtml(q.q)} <span style="font-weight:400;color:var(--text-light);font-size:12px;">(расставьте в правильном порядке)</span></p><div class="order-list">${rowsHtml}</div></div>`;
+        }
+
+        return '';
+      }
+
+      
       function renderModuleStages(key) {
         const mod = contentData[key];
         const container = document.getElementById('moduleStages');
@@ -901,12 +976,11 @@
             const bestScore = stepProg.score || 0;
             let questionsHtml = '';
             (step.questions || []).forEach((q, qi) => {
-              let optsHtml = '';
-              (q.options || []).forEach((opt, oi) => {
-                optsHtml += `<label class="option"><input type="radio" name="q-${idx}-${qi}" value="${oi}" />${escapeHtml(opt)}</label>`;
-              });
-              questionsHtml += `<div class="question"><p>${qi+1}. ${escapeHtml(q.q)}</p>${optsHtml}</div>`;
+                         let questionsHtml = '';
+            (step.questions || []).forEach((q, qi) => {
+              questionsHtml += renderQuestionHtml(q, idx, qi);
             });
+
             card.innerHTML = `
               <div class="stage-top-row">
                 <div style="flex:1;"><span class="stage-tag">Шаг ${idx+1} · Тест</span><h3>${escapeHtml(step.title || 'Проверьте знания')}</h3></div>
@@ -941,16 +1015,63 @@
             renderOverview();
           });
         });
+                container.querySelectorAll('.order-up-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const row = btn.closest('.order-row');
+            const prev = row.previousElementSibling;
+            if (prev) row.parentNode.insertBefore(row, prev);
+          });
+        });
+        container.querySelectorAll('.order-down-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const row = btn.closest('.order-row');
+            const next = row.nextElementSibling;
+            if (next) row.parentNode.insertBefore(next, row);
+          });
+        });
+
         container.querySelectorAll('[data-test-form]').forEach((form) => {
           const idx = parseInt(form.dataset.testForm);
           form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const step = mod.steps[idx];
-            const questions = step.questions || [];
+                        const questions = step.questions || [];
             let correctCount = 0;
             questions.forEach((q, qi) => {
-              const selected = e.target.querySelector(`input[name="q-${idx}-${qi}"]:checked`);
-              if (selected && parseInt(selected.value) === q.correct) correctCount++;
+              const type = q.type || 'single';
+
+              if (type === 'single') {
+                const selected = e.target.querySelector(`input[name="q-{idx}-${qi}"]:checked`);
+                if (selected && parseInt(selected.value) === q.correct) correctCount++;
+              }
+
+              if (type === 'multiple') {
+                const checked = e.target.querySelectorAll(`input[name="q-${idx}-${qi}"]:checked`);
+                const selectedVals = Array.from(checked).map(c => parseInt(c.value)).sort((a,b)=>a-b);
+                const correctVals = (q.correct || []).slice().sort((a,b)=>a-b);
+                const isEqual = selectedVals.length === correctVals.length && selectedVals.every((v,i) => v === correctVals[i]);
+                if (isEqual) correctCount++;
+              }
+
+              if (type === 'matching') {
+                const selects = e.target.querySelectorAll(`.match-select[data-q="${idx}-${qi}"]`);
+                let allCorrect = selects.length > 0;
+                selects.forEach((sel) => {
+                  const pi = parseInt(sel.dataset.pairIndex);
+                  const expected = (q.pairs[pi] || {}).right;
+                  if (sel.value !== expected) allCorrect = false;
+                });
+                if (allCorrect) correctCount++;
+              }
+
+              if (type === 'ordering') {
+                const questionEl = e.target.querySelector(`.question[data-q="${idx}-${qi}"]`);
+                const rows = questionEl ? questionEl.querySelectorAll('.order-row') : [];
+                const currentOrder = Array.from(rows).map(r => parseInt(r.dataset.origIndex));
+                const isCorrectOrder = currentOrder.every((val, i) => val === i);
+                if (isCorrectOrder) correctCount++;
+              }
+            });
+
             });
             const score = questions.length ? Math.round((correctCount / questions.length) * 100) : 0;
             const passResult = score >= (step.passScore || 80);
@@ -1119,33 +1240,148 @@
         openModal('modalTest');
       }
 
-      function addQuestionEditBlock(q) {
-        q = q || { q: '', options: ['','','',''], correct: 0 };
+            function addQuestionEditBlock(q) {
+        q = q || { type:'single', q:'', options:['','','',''], correct:0 };
+        if (!q.type) q.type = 'single';
         const list = document.getElementById('questionsEditList');
         const block = document.createElement('div');
         block.className = 'q-edit-block';
         const blockId = 'qb_' + Math.random().toString(36).slice(2,9);
         block.dataset.blockId = blockId;
+        block.innerHTML = buildQuestionBlockInnerHtml(q, blockId);
+        list.appendChild(block);
+        wireQuestionBlockEvents(block);
+      }
 
-        let optsHtml = '';
-        for (let i = 0; i < 4; i++) {
-          const val = q.options[i] || '';
-          const checked = q.correct === i ? 'checked' : '';
-          optsHtml += `
-            <div class="opt-row">
-              <input type="radio" name="correct_${blockId}" value="${i}" ${checked} />
-              <input type="text" class="opt-input" placeholder="Вариант ${i+1}" value="${val.replace(/"/g,'&quot;')}" />
-            </div>`;
+      function buildQuestionBlockInnerHtml(q, blockId) {
+        const typeOptions = [
+          ['single','Один правильный ответ'],
+          ['multiple','Несколько правильных ответов'],
+          ['matching','Сопоставление (соотнести пары)'],
+          ['ordering','Правильный порядок (последовательность)']
+        ].map(([val,label]) => `<option value="{val}" ${q.type===val?'selected':''}>${label}</option>`).join('');
+
+        let bodyHtml = '';
+
+        if (q.type === 'single' || q.type === 'multiple') {
+          const options = q.options && q.options.length ? q.options : ['','','',''];
+          const correctArr = q.type === 'multiple' ? (Array.isArray(q.correct) ? q.correct : []) : [];
+          let optsHtml = '';
+          options.forEach((val, i) => {
+            const inputType = q.type === 'multiple' ? 'checkbox' : 'radio';
+            const inputName = q.type === 'multiple' ? `correct_multi_${blockId}_${i}` : `correct_${blockId}`;
+            const checked = q.type === 'multiple' ? (correctArr.includes(i) ? 'checked' : '') : (q.correct === i ? 'checked' : '');
+            optsHtml += `
+              <div class="opt-row">
+                <input type="${inputType}" class="opt-correct-input" name="${inputName}" value="${i}" ${checked} />
+                <input type="text" class="opt-input" placeholder="Вариант ${i+1}" value="${(val||'').replace(/"/g,'&quot;')}" />
+              </div>`;
+          });
+          bodyHtml = `<div class="field-group"><label>Варианты ответов (отметьте ${q.type === 'multiple' ? 'все правильные' : 'правильный'})</label>${optsHtml}</div>`;
         }
 
-        block.innerHTML = `
+        if (q.type === 'matching') {
+          const pairs = q.pairs && q.pairs.length ? q.pairs : [{left:'',right:''},{left:'',right:''}];
+          let rowsHtml = '';
+          pairs.forEach((p) => {
+            rowsHtml += `
+              <div class="match-row">
+                <input type="text" class="match-left-input" placeholder="Левая часть (например: A) Бытовой ручной)" value="${(p.left||'').replace(/"/g,'&quot;')}" />
+                <span class="arrow">→</span>
+                <input type="text" class="match-right-input" placeholder="Правильное соответствие" value="${(p.right||'').replace(/"/g,'&quot;')}" />
+                <button type="button" class="remove-row-btn" title="Удалить пару">✕</button>
+              </div>`;
+          });
+          bodyHtml = `<div class="field-group"><label>Пары для сопоставления</label><div class="match-rows-list">${rowsHtml}</div>
+            <button type="button" class="btn btn-secondary btn-sm add-row-btn add-match-row-btn">+ Добавить пару</button></div>`;
+        }
+
+        if (q.type === 'ordering') {
+          const items = q.items && q.items.length ? q.items : ['',''];
+          let rowsHtml = '';
+          items.forEach((val, i) => {
+            rowsHtml += `
+              <div class="order-row">
+                <span class="order-num">${i+1}</span>
+                <input type="text" class="order-item-input" placeholder="Шаг ${i+1}" value="${(val||'').replace(/"/g,'&quot;')}" />
+                <button type="button" class="remove-row-btn" title="Удалить пункт">✕</button>
+              </div>`;
+          });
+          bodyHtml = `<div class="field-group"><label>Правильный порядок пунктов (сверху вниз — как должно быть верно)</label><div class="order-rows-list">${rowsHtml}</div>
+            <button type="button" class="btn btn-secondary btn-sm add-row-btn add-order-row-btn">+ Добавить пункт</button></div>`;
+        }
+
+        return `
           <button type="button" class="remove-q">✕ Удалить вопрос</button>
+          <div class="field-group"><label>Тип вопроса</label><select class="q-type-select">${typeOptions}</select></div>
           <div class="field-group"><label>Текст вопроса</label><input type="text" class="q-input" value="${(q.q||'').replace(/"/g,'&quot;')}" /></div>
-          <div class="field-group"><label>Варианты ответов (отметьте правильный)</label>${optsHtml}</div>
+          <div class="q-type-body">${bodyHtml}</div>
         `;
-        list.appendChild(block);
-        block.querySelector('.remove-q').addEventListener('click', () => block.remove());
       }
+
+      function wireQuestionBlockEvents(block) {
+        block.querySelector('.remove-q').addEventListener('click', () => block.remove());
+
+        const typeSelect = block.querySelector('.q-type-select');
+        typeSelect.addEventListener('change', () => {
+          const newType = typeSelect.value;
+          const currentQText = block.querySelector('.q-input').value;
+          const blockId = block.dataset.blockId;
+          const freshQ = { type: newType, q: currentQText, options:['','','',''], correct: newType==='multiple'?[]:0, pairs:[{left:'',right:''},{left:'',right:''}], items:['',''] };
+          block.innerHTML = buildQuestionBlockInnerHtml(freshQ, blockId);
+          wireQuestionBlockEvents(block);
+        });
+
+        const addMatchBtn = block.querySelector('.add-match-row-btn');
+        if (addMatchBtn) {
+          addMatchBtn.addEventListener('click', () => {
+            const list = block.querySelector('.match-rows-list');
+            const row = document.createElement('div');
+            row.className = 'match-row';
+            row.innerHTML = `
+              <input type="text" class="match-left-input" placeholder="Левая часть" />
+              <span class="arrow">→</span>
+              <input type="text" class="match-right-input" placeholder="Правильное соответствие" />
+              <button type="button" class="remove-row-btn" title="Удалить пару">✕</button>`;
+            list.appendChild(row);
+            row.querySelector('.remove-row-btn').addEventListener('click', () => row.remove());
+          });
+        }
+
+        const addOrderBtn = block.querySelector('.add-order-row-btn');
+        if (addOrderBtn) {
+          addOrderBtn.addEventListener('click', () => {
+            const list = block.querySelector('.order-rows-list');
+            const idx = list.children.length;
+            const row = document.createElement('div');
+            row.className = 'order-row';
+            row.innerHTML = `
+              <span class="order-num">${idx+1}</span>
+              <input type="text" class="order-item-input" placeholder="Шаг ${idx+1}" />
+              <button type="button" class="remove-row-btn" title="Удалить пункт">✕</button>`;
+            list.appendChild(row);
+            row.querySelector('.remove-row-btn').addEventListener('click', () => { row.remove(); renumberOrderRows(block); });
+          });
+        }
+
+        block.querySelectorAll('.remove-row-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const row = btn.closest('.match-row, .order-row');
+            const isOrder = row.classList.contains('order-row');
+            row.remove();
+            if (isOrder) renumberOrderRows(block);
+          });
+        });
+      }
+
+      function renumberOrderRows(block) {
+        const rows = block.querySelectorAll('.order-row');
+        rows.forEach((row, i) => {
+          row.querySelector('.order-num').textContent = (i+1);
+          row.querySelector('.order-item-input').placeholder = 'Шаг ' + (i+1);
+        });
+      }
+
 
       async function saveTest() {
         const mod = contentData[currentModuleKey];
@@ -1156,11 +1392,41 @@
         const questions = [];
         blocks.forEach((block) => {
           const qText = block.querySelector('.q-input').value.trim();
-          const optInputs = block.querySelectorAll('.opt-input');
-          const options = Array.from(optInputs).map(i => i.value.trim());
-          const correctRadio = block.querySelector('input[type="radio"]:checked');
-          const correct = correctRadio ? parseInt(correctRadio.value) : 0;
-          if (qText) questions.push({ q: qText, options, correct });
+          if (!qText) return;
+          const type = block.querySelector('.q-type-select').value;
+
+          if (type === 'single') {
+            const optInputs = block.querySelectorAll('.opt-input');
+            const options = Array.from(optInputs).map(i => i.value.trim());
+            const correctRadio = block.querySelector('.opt-correct-input:checked');
+            const correct = correctRadio ? parseInt(correctRadio.value) : 0;
+            questions.push({ type, q: qText, options, correct });
+          }
+
+          if (type === 'multiple') {
+            const optInputs = block.querySelectorAll('.opt-input');
+            const options = Array.from(optInputs).map(i => i.value.trim());
+            const correctChecks = block.querySelectorAll('.opt-correct-input:checked');
+            const correct = Array.from(correctChecks).map(c => parseInt(c.value));
+            questions.push({ type, q: qText, options, correct });
+          }
+
+          if (type === 'matching') {
+            const rows = block.querySelectorAll('.match-row');
+            const pairs = [];
+            rows.forEach((row) => {
+              const left = row.querySelector('.match-left-input').value.trim();
+              const right = row.querySelector('.match-right-input').value.trim();
+              if (left && right) pairs.push({ left, right });
+            });
+            questions.push({ type, q: qText, pairs });
+          }
+
+          if (type === 'ordering') {
+            const rows = block.querySelectorAll('.order-row');
+            const items = Array.from(rows).map(r => r.querySelector('.order-item-input').value.trim()).filter(v => v);
+            questions.push({ type, q: qText, items });
+          }
         });
         if (title) step.title = title;
         step.passScore = passScore;
@@ -1168,10 +1434,10 @@
         await setDoc(doc(db, 'content', currentModuleKey), mod);
         closeModal('modalTest');
         renderModuleStages(currentModuleKey);
-        renderOverview();                showToast('Тест сохранён');
-
-
+        renderOverview();
+        showToast('Тест сохранён');
       }
+
 
       function openModuleInfoModal(key) {
         const mod = contentData[key];
