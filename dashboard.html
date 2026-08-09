@@ -1187,6 +1187,8 @@
         restoreEditorSelection();
         document.execCommand('insertHTML', false, embedHtml + '<p><br></p>');
         closeModal('modalInsertVideo');
+        renderModuleStages(currentModuleKey);
+
       }
 
       async function saveStepEditor() {
@@ -1433,12 +1435,24 @@
     step.questions = questions;
   }
 
-  await setDoc(doc(db, 'content', currentModuleKey), mod);
-  closeModal('modalTest');
-  renderModuleStages(currentModuleKey);
-  renderOverview();
+ // Обновляете questions внутри объекта, который собирается отправить
+contentData[currentModuleKey].steps[currentStepIndex].questions = questions;
 
-  showToast('Тест сохранён');
+// Проверка структуры после обновления
+console.log('Обновленная структура с вопросами:', contentData[currentModuleKey]);
+
+// Отправляете в Firestore именно этот объект
+await setDoc(doc(db, 'content', currentModuleKey), contentData[currentModuleKey]);
+
+// После этого вызываете рендер, отладку и т.п.
+closeModal('modalTest');
+renderModuleStages(currentModuleKey);
+console.log('После рендера:', contentData[currentModuleKey]);
+
+renderOverview();
+
+showToast('Тест сохранён');
+
 }
 
 
