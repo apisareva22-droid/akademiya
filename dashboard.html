@@ -965,7 +965,7 @@
             card.innerHTML = `
               <div class="stage-top-row">
                 <div style="flex:1;">
-                  <span class="stage-tag">Шаг {idx+1} · Теория</span>
+                  <span class="stage-tag">Шаг ${idx+1} · Теория</span>
                   <h3>${escapeHtml(step.title || '')}</h3>
                 </div>
                 ${isAdmin ? `<div class="step-header-actions"><button class="edit-pencil" data-edit-step="${idx}" title="Редактировать">✏️</button></div>` : ''}
