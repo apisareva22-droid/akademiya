@@ -183,7 +183,30 @@
       .module-progress-row{background:var(--white); border:1px solid var(--gray-line); border-radius:var(--radius); padding:20px; margin-bottom:14px;}
       .module-progress-row .mp-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;}
       .module-progress-row h4{font-size:15px; color:var(--navy); font-weight:700;}
-      .mp-stage-list{display:flex; gap:20px; flex-wrap:wrap; margin-top:10px;}
+     .mp-stage-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-top:12px;
+}
+.mp-stage{
+  width:100%;
+  padding:10px 12px;
+  background:var(--gray-bg);
+  border-radius:8px;
+}
+.mp-stage-type{
+  color:var(--text-light);
+  font-weight:400;
+}
+.mp-stage-status{
+  margin-left:auto;
+  font-weight:700;
+  white-space:nowrap;
+}
+.mp-stage.done .mp-stage-status{color:#1e7a34;}
+.mp-stage.pending .mp-stage-status{color:var(--text-light);}
+
       .mp-stage{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-light);}
       .mp-stage .stage-icon{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
       .mp-stage.done .stage-icon{background:rgba(46,160,67,0.15); color:#1e7a34;}
@@ -226,6 +249,55 @@
       .match-select{width:100%; padding:9px 10px; border-radius:8px; border:1.5px solid var(--gray-line); background:#fff; font-size:13.5px;}
       .order-nav-btn{width:28px; height:28px; border:1px solid var(--gray-line); background:#fff; border-radius:6px; cursor:pointer; font-size:12px; color:var(--navy);}
       .order-nav-btn:hover{background:var(--orange); color:#fff; border-color:var(--orange);}
+      /* Управление порядком оборудования: только администратор */
+      .nav-item-main{
+        display:flex;
+        align-items:center;
+        gap:12px;
+        flex:1;
+        min-width:0;
+      }
+
+      .nav-item-title{
+        overflow:hidden;
+        text-overflow:ellipsis;
+        white-space:nowrap;
+      }
+
+      .order-controls{
+        display:flex;
+        flex-direction:column;
+        gap:2px;
+        margin-left:8px;
+        flex-shrink:0;
+      }
+
+      .order-arrow-btn{
+        width:22px;
+        height:17px;
+        padding:0;
+        border-radius:4px;
+        border:1px solid rgba(255,255,255,0.15);
+        background:rgba(255,255,255,0.08);
+        color:rgba(255,255,255,0.8);
+        cursor:pointer;
+        font-size:9px;
+        line-height:1;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+      }
+
+      .order-arrow-btn:hover:not(:disabled){
+        background:var(--orange);
+        border-color:var(--orange);
+        color:#fff;
+      }
+
+      .order-arrow-btn:disabled{
+        opacity:0.25;
+        cursor:default;
+      }
 
 
     </style>
@@ -710,23 +782,113 @@ function showToast(message, type='success') {
         return Object.keys(contentData).sort((a,b) => (contentData[a].order||0) - (contentData[b].order||0));
       }
 
-      function renderSidebar() {
+            async function moveModuleOrder(key, direction) {
+        const keys = sortedModuleKeys();
+        const currentIndex = keys.indexOf(key);
+
+        if (currentIndex === -1) return;
+
+        const targetIndex = direction === 'up'
+          ? currentIndex - 1
+          : currentIndex + 1;
+
+        if (targetIndex < 0 || targetIndex >= keys.length) return;
+
+        const otherKey = keys[targetIndex];
+        const currentOrder = contentData[key].order || 0;
+        const otherOrder = contentData[otherKey].order || 0;
+
+        try {
+          contentData[key].order = otherOrder;
+          contentData[otherKey].order = currentOrder;
+
+          await setDoc(
+            doc(db, 'content', key),
+            { order: otherOrder },
+            { merge: true }
+          );
+
+          await setDoc(
+            doc(db, 'content', otherKey),
+            { order: currentOrder },
+            { merge: true }
+          );
+
+          renderSidebar();
+          renderOverview();
+          showToast('Порядок оборудования обновлён');
+        } catch (err) {
+          // Откат в памяти, если запись в Firestore не удалась
+          contentData[key].order = currentOrder;
+          contentData[otherKey].order = otherOrder;
+
+          console.error('Ошибка изменения порядка оборудования:', err);
+          alert('Не удалось изменить порядок: ' + (err.message || 'неизвестная ошибка'));
+        }
+      }
+
+
+           function renderSidebar() {
         const list = document.getElementById('equipmentNavList');
         list.innerHTML = '';
-        sortedModuleKeys().forEach((key) => {
+
+        const keys = sortedModuleKeys();
+
+        keys.forEach((key, idx) => {
           const mod = contentData[key];
           const item = document.createElement('div');
           item.className = 'nav-item';
           item.dataset.module = key;
-          item.innerHTML = `<span class="nav-icon">${mod.icon || '📦'}</span> ${mod.title} <span class="badge-progress" id="navProgress-${key}">0%</span>`;
-          item.addEventListener('click', () => {
+
+          item.innerHTML = `
+            <div class="nav-item-main">
+              <span class="nav-icon">{mod.icon || '📦'}</span>
+              <span class="nav-item-title">${escapeHtml(mod.title || '')}</span>
+              <span class="badge-progress" id="navProgress-${key}">0%</span>
+            </div>
+            ${isAdmin ? `
+              <span class="order-controls">
+                <button
+                  type="button"
+                  class="order-arrow-btn"
+                  data-move="up"
+                  data-key="${key}"
+                  title="Переместить выше"
+                  ${idx === 0 ? 'disabled' : ''}
+                >▲</button>
+                <button
+                  type="button"
+                  class="order-arrow-btn"
+                  data-move="down"
+                  data-key="${key}"
+                  title="Переместить ниже"
+                  ${idx === keys.length - 1 ? 'disabled' : ''}
+                >▼</button>
+              </span>
+            ` : ''}
+          `;
+
+          item.addEventListener('click', (e) => {
+            if (e.target.closest('.order-arrow-btn')) return;
+
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             item.classList.add('active');
             openModule(key);
           });
+
           list.appendChild(item);
         });
+
+        if (isAdmin) {
+          list.querySelectorAll('.order-arrow-btn').forEach((button) => {
+            button.addEventListener('click', async (e) => {
+              e.stopPropagation();
+              await moveModuleOrder(button.dataset.key, button.dataset.move);
+            });
+          });
+        }
       }
+
 
       function setupStaticHandlers() {
         document.querySelector('.nav-item[data-view="overview"]').addEventListener('click', function() {
@@ -841,13 +1003,14 @@ function showToast(message, type='success') {
       }
 
       function starsForPercent(pct) {
-        if (pct >= 91) return 5;
-        if (pct >= 71) return 4;
-        if (pct >= 46) return 3;
-        if (pct >= 21) return 2;
-        if (pct > 0) return 1;
-        return 0;
-      }
+  if (pct >= 100) return 5;
+  if (pct >= 80) return 4;
+  if (pct >= 60) return 3;
+  if (pct >= 40) return 2;
+  if (pct >= 20) return 1;
+  return 0;
+}
+
 
       function renderOverview() {
         const keys = sortedModuleKeys();
@@ -1761,15 +1924,37 @@ function showToast(message, type='success') {
             const totalSteps = (mod.steps || []).length;
             let doneCount = 0;
             let stagesHtml = '';
-            (mod.steps || []).forEach((st) => {
+                        (mod.steps || []).forEach((st, stIdx) => {
               const sp = stepsProg[st.id] || {};
+              const typeLabel = st.type === 'test' ? 'Тест' : 'Теория';
               let done = false;
-              let label = '';
-              if (st.type === 'theory') { done = !!sp.viewed; label = (st.title || 'Теория') + (done ? ' изучена' : ' не изучена'); }
-              if (st.type === 'test') { done = !!sp.passed; label = (st.title || 'Тест') + (done ? (' сдан (' + (sp.score||0) + '%)') : ' не сдан'); }
+              let statusLabel = '';
+
+              if (st.type === 'theory') {
+                done = !!sp.viewed;
+                statusLabel = done ? 'Изучено' : 'Не изучено';
+              }
+
+              if (st.type === 'test') {
+                done = !!sp.passed;
+                statusLabel = done ? ('Сдан: ' + (sp.score || 0) + '%') : 'Не сдан';
+              }
+
               if (done) doneCount++;
-              stagesHtml += `<div class="mp-stage ${done ? 'done' : 'pending'}"><span class="stage-icon">${done ? '✓' : '○'}</span> ${escapeHtml(label)}</div>`;
+
+              stagesHtml += `
+                <div class="mp-stage {done ? 'done' : 'pending'}">
+                  <span class="stage-icon">${done ? '✓' : '○'}</span>
+                  <span>
+                    <b>Шаг ${stIdx + 1}.</b>
+                    ${escapeHtml(st.title || typeLabel)}
+                    <span class="mp-stage-type">(${typeLabel})</span>
+                  </span>
+                  <span class="mp-stage-status">${statusLabel}</span>
+                </div>
+              `;
             });
+
             const pct = totalSteps ? Math.round((doneCount / totalSteps) * 100) : 0;
             const stars = starsForPercent(pct);
 
