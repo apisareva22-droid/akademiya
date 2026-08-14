@@ -842,7 +842,7 @@ function showToast(message, type='success') {
 
           item.innerHTML = `
             <div class="nav-item-main">
-              <span class="nav-icon">{mod.icon || '📦'}</span>
+              <span class="nav-icon">${mod.icon || '📦'}</span>
               <span class="nav-item-title">${escapeHtml(mod.title || '')}</span>
               <span class="badge-progress" id="navProgress-${key}">0%</span>
             </div>
