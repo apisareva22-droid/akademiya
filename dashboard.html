@@ -299,6 +299,14 @@
         cursor:default;
       }
 
+            .step-content-display audio,
+      #stepContentEditor audio{
+        display:block;
+        width:100%;
+        max-width:560px;
+        margin:14px 0;
+      }
+
 
     </style>
     
@@ -448,9 +456,13 @@
             <button type="button" class="toolbar-btn" data-cmd="formatBlock" data-val="P" title="Обычный текст">¶</button>
             <button type="button" class="toolbar-btn" id="insertImageBtn" title="Вставить картинку">🖼️</button>
             <button type="button" class="toolbar-btn" id="insertVideoBtn" title="Вставить видео в это место">🎬</button>
+            <button type="button" class="toolbar-btn" id="insertAudioBtn" title="Вставить аудио в это место">🔊</button>
+
           </div>
           <div id="stepContentEditor" contenteditable="true"></div>
           <input type="file" id="imageFileInput" accept="image/*" style="display:none;" />
+          <input type="file" id="audioFileInput" accept="audio/*" style="display:none;" />
+
         </div>
         <div class="modal-actions">
           <button class="btn btn-danger" id="deleteStepBtn">Удалить шаг</button>
@@ -956,6 +968,13 @@ function showToast(message, type='success') {
           document.getElementById('insertVideoUrlInput').value = '';
           openModal('modalInsertVideo');
         });
+                document.getElementById('insertAudioBtn').addEventListener('click', () => {
+          saveEditorSelection();
+          document.getElementById('audioFileInput').click();
+        });
+
+        document.getElementById('audioFileInput').addEventListener('change', handleAudioFileSelected);
+
         document.getElementById('confirmInsertVideoBtn').addEventListener('click', confirmInsertVideoIntoEditor);
 
         const usersNav = document.getElementById('usersNavItem');
@@ -1414,6 +1433,51 @@ function showToast(message, type='success') {
         };
         reader.readAsDataURL(file);
       }
+
+            function handleAudioFileSelected(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Ограничение: 500 КБ исходного файла.
+        // В base64 он станет примерно 670 КБ.
+        // Это снижает риск превышения лимита Firestore в 1 МБ на один шаг.
+        const maxAudioSize = 500 * 1024;
+
+        if (file.size > maxAudioSize) {
+          alert(
+            'Этот аудиофайл слишком большой для вставки в шаг. ' +
+            'Максимальный размер: 500 КБ. ' +
+            'Для длинных аудиозаписей потребуется Firebase Storage.'
+          );
+          e.target.value = '';
+          return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function(event) {
+          restoreEditorSelection();
+
+          const audioHtml = `
+            <audio controls preload="metadata">
+              <source src="{event.target.result}" type="${file.type || 'audio/mpeg'}">
+              Ваш браузер не поддерживает воспроизведение аудио.
+            </audio>
+            <p><br></p>
+          `;
+
+          document.execCommand('insertHTML', false, audioHtml);
+          e.target.value = '';
+        };
+
+        reader.onerror = function() {
+          alert('Не удалось прочитать аудиофайл.');
+          e.target.value = '';
+        };
+
+        reader.readAsDataURL(file);
+      }
+
 
       function confirmInsertVideoIntoEditor() {
         const url = document.getElementById('insertVideoUrlInput').value.trim();
