@@ -307,6 +307,27 @@
         margin:14px 0;
       }
 
+            .step-content-display .audio-drive-wrap,
+      #stepContentEditor .audio-drive-wrap{
+        position:relative;
+        width:100%;
+        max-width:640px;
+        height:95px;
+        margin:14px 0;
+        border-radius:10px;
+        overflow:hidden;
+        background:#f4f5f7;
+        border:1px solid var(--gray-line);
+      }
+
+      .step-content-display .audio-drive-wrap iframe,
+      #stepContentEditor .audio-drive-wrap iframe{
+        width:100%;
+        height:100%;
+        border:0;
+      }
+
+
 
     </style>
     
@@ -456,7 +477,8 @@
             <button type="button" class="toolbar-btn" data-cmd="formatBlock" data-val="P" title="Обычный текст">¶</button>
             <button type="button" class="toolbar-btn" id="insertImageBtn" title="Вставить картинку">🖼️</button>
             <button type="button" class="toolbar-btn" id="insertVideoBtn" title="Вставить видео в это место">🎬</button>
-            <button type="button" class="toolbar-btn" id="insertAudioBtn" title="Вставить аудио в это место">🔊</button>
+           <button type="button" class="toolbar-btn" id="insertAudioBtn" title="Вставить аудио с Google Drive">🔊</button>
+
 
           </div>
           <div id="stepContentEditor" contenteditable="true"></div>
@@ -558,6 +580,31 @@
         </div>
       </div>
     </div>
+
+        <div class="modal-overlay" id="modalInsertAudio">
+      <div class="modal-box">
+        <h3>Вставить аудио с Google Drive</h3>
+
+        <div class="field-group">
+          <label>Ссылка на файл из Google Drive</label>
+          <input
+            type="url"
+            id="insertAudioUrlInput"
+            placeholder="https://drive.google.com/file/d/.../view"
+          />
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-secondary" onclick="closeModal('modalInsertAudio')">
+            Отмена
+          </button>
+          <button class="btn btn-primary" id="confirmInsertAudioBtn">
+            Вставить аудио
+          </button>
+        </div>
+      </div>
+    </div>
+
 
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
@@ -968,14 +1015,17 @@ function showToast(message, type='success') {
           document.getElementById('insertVideoUrlInput').value = '';
           openModal('modalInsertVideo');
         });
-                document.getElementById('insertAudioBtn').addEventListener('click', () => {
+         document.getElementById('confirmInsertVideoBtn').addEventListener('click', confirmInsertVideoIntoEditor);
+        
+         document.getElementById('insertAudioBtn').addEventListener('click', () => {
           saveEditorSelection();
-          document.getElementById('audioFileInput').click();
+          document.getElementById('insertAudioUrlInput').value = '';
+          openModal('modalInsertAudio');
         });
 
-        document.getElementById('audioFileInput').addEventListener('change', handleAudioFileSelected);
+        document.getElementById('confirmInsertAudioBtn').addEventListener('click', confirmInsertAudioIntoEditor);
 
-        document.getElementById('confirmInsertVideoBtn').addEventListener('click', confirmInsertVideoIntoEditor);
+       
 
         const usersNav = document.getElementById('usersNavItem');
         if (usersNav) {
@@ -1434,50 +1484,7 @@ function showToast(message, type='success') {
         reader.readAsDataURL(file);
       }
 
-            function handleAudioFileSelected(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        // Ограничение: 500 КБ исходного файла.
-        // В base64 он станет примерно 670 КБ.
-        // Это снижает риск превышения лимита Firestore в 1 МБ на один шаг.
-        const maxAudioSize = 500 * 1024;
-
-        if (file.size > maxAudioSize) {
-          alert(
-            'Этот аудиофайл слишком большой для вставки в шаг. ' +
-            'Максимальный размер: 500 КБ. ' +
-            'Для длинных аудиозаписей потребуется Firebase Storage.'
-          );
-          e.target.value = '';
-          return;
-        }
-
-        const reader = new FileReader();
-
-        reader.onload = function(event) {
-          restoreEditorSelection();
-
-          const audioHtml = `
-            <audio controls preload="metadata">
-              <source src="{event.target.result}" type="${file.type || 'audio/mpeg'}">
-              Ваш браузер не поддерживает воспроизведение аудио.
-            </audio>
-            <p><br></p>
-          `;
-
-          document.execCommand('insertHTML', false, audioHtml);
-          e.target.value = '';
-        };
-
-        reader.onerror = function() {
-          alert('Не удалось прочитать аудиофайл.');
-          e.target.value = '';
-        };
-
-        reader.readAsDataURL(file);
-      }
-
+            
 
       function confirmInsertVideoIntoEditor() {
         const url = document.getElementById('insertVideoUrlInput').value.trim();
@@ -1528,6 +1535,43 @@ function showToast(message, type='success') {
           console.error('Ошибка удаления шага', err);
           alert('Не удалось удалить шаг: ' + (err.message || 'неизвестная ошибка'));
         }
+      }
+
+            function confirmInsertAudioIntoEditor() {
+        const driveUrl = document.getElementById('insertAudioUrlInput').value.trim();
+
+        if (!driveUrl) {
+          alert('Вставьте ссылку на файл из Google Drive.');
+          return;
+        }
+
+        // Извлекаем ID из формата:
+        // https://drive.google.com/file/d/FILE_ID/view
+        const match = driveUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+
+        if (!match) {
+          alert('Не удалось найти ID файла. Вставьте ссылку из Google Drive в формате /file/d/.../view');
+          return;
+        }
+
+        const fileId = match[1];
+        const previewUrl = 'https://drive.google.com/file/d/' + fileId + '/preview';
+
+        const audioHtml = `
+          <div class="audio-drive-wrap" contenteditable="false">
+            <iframe
+              src="{previewUrl}"
+              allow="autoplay"
+              allowfullscreen
+              loading="lazy"
+            ></iframe>
+          </div>
+          <p><br></p>
+        `;
+
+        restoreEditorSelection();
+        document.execCommand('insertHTML', false, audioHtml);
+        closeModal('modalInsertAudio');
       }
 
       function openTestModal(idx) {
