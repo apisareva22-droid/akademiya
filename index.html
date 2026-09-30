@@ -5,43 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Академия АЛЬФАПРОМ — Вход</title>
     <style>
-      :root{
-        --navy:#2b2d33; --navy-2:#3f4149; --orange:#ff8100; --orange-dark:#cc6700;
-        --gray-bg:#f4f5f7; --gray-line:#e2e5ea; --text:#232733; --text-light:#6b7280;
-        --white:#ffffff; --radius:16px; --shadow:0 10px 30px rgba(43,45,51,0.08);
-      }
-      *{box-sizing:border-box;margin:0;padding:0;}
+
+      :root{--orange:#ff8100;--bg:#f6f7f9;--card:#fff;--text:#20242a;--muted:#747b84;--line:#e6e8eb;--shadow:0 8px 28px rgba(24,31,39,.07);}
+      *{box-sizing:border-box}
       body{
         font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-        background:linear-gradient(135deg,var(--navy) 0%, #17181c 100%);
-        min-height:100vh; display:flex; align-items:center; justify-content:center;
+        background:var(--bg);
+        min-height:100vh;
+        display:flex;
+        align-items:center;
+        justify-content:center;
         padding:24px;
       }
       .login-card{
-        background:var(--white); border-radius:20px; padding:42px 38px;
-        box-shadow:0 20px 50px rgba(0,0,0,0.3); width:100%; max-width:420px;
+        background:var(--card);
+        border:1px solid var(--line);
+        border-radius:18px;
+        padding:34px;
+        box-shadow:var(--shadow);
+        width:100%;
+        max-width:440px;
       }
-      .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;color:var(--navy);margin-bottom:26px;}
-      .logo-badge{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--navy),var(--navy-2));display:flex;align-items:center;justify-content:center;color:var(--orange);font-weight:900;font-size:18px;}
-      h3{font-size:22px;color:var(--navy);font-weight:800;margin-bottom:6px;}
-      .sub{font-size:13.5px;color:var(--text-light);margin-bottom:26px;}
+      .logo{display:flex;align-items:center;gap:12px;font-weight:800;font-size:18px;color:var(--text);margin-bottom:28px;}
+      .logo-badge{width:42px;height:42px;border-radius:12px;background:var(--orange);display:grid;place-items:center;color:#fff;font-weight:900;font-size:20px;}
+      h3{font-size:28px;line-height:1.15;color:var(--text);font-weight:850;margin-bottom:7px;}
+      .sub{font-size:13.5px;line-height:1.5;color:var(--muted);margin-bottom:26px;}
       .form-group{margin-bottom:18px;}
-      .form-group label{display:block;font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px;}
-      .form-group input{
-        width:100%;padding:13px 14px;border-radius:10px;border:1.5px solid var(--gray-line);
-        font-size:14.5px;background:var(--gray-bg);transition:border-color .2s;
-      }
-      .form-group input:focus{outline:none;border-color:var(--orange);background:var(--white);}
-      .btn-login{
-        width:100%;background:var(--navy);color:#fff;padding:15px;border:none;border-radius:12px;
-        font-weight:700;font-size:15px;cursor:pointer;transition:background .2s;
-      }
-      .btn-login:hover{background:var(--orange-dark);}
+      .form-group label{display:block;font-size:12px;font-weight:750;color:var(--text);margin-bottom:7px;}
+      .form-group input{width:100%;height:44px;padding:0 13px;border-radius:11px;border:1px solid var(--line);font-size:14px;background:#f7f8fa;transition:.18s ease;}
+      .form-group input:focus{outline:none;border-color:#ffc080;background:#fff;box-shadow:0 0 0 4px rgba(255,129,0,.08);}
+      .btn-login{width:100%;height:46px;background:var(--orange);color:#fff;padding:0 15px;border:none;border-radius:11px;font-weight:750;font-size:14px;cursor:pointer;transition:.18s ease;}
+      .btn-login:hover{background:#e86f00;transform:translateY(-1px);}
       .login-msg{margin-top:16px;padding:12px 14px;border-radius:10px;font-size:13.5px;display:none;}
       .login-msg.show{display:block;}
-      .login-msg.success{background:rgba(46,160,67,0.1);color:#1e7a34;border:1px solid rgba(46,160,67,0.25);}
-      .login-msg.error{background:rgba(230,60,60,0.08);color:#c0362c;border:1px solid rgba(230,60,60,0.2);}
-      .hint{margin-top:18px;font-size:12px;color:var(--text-light);text-align:center;padding-top:16px;border-top:1px dashed var(--gray-line);}
+      .login-msg.success{background:rgba(46,160,67,.1);color:#1e7a34;border:1px solid rgba(46,160,67,.25);}
+      .login-msg.error{background:rgba(230,60,60,.08);color:#c0362c;border:1px solid rgba(230,60,60,.2);}
+      .hint{margin-top:18px;font-size:12px;color:var(--muted);text-align:center;padding-top:16px;border-top:1px solid var(--line);}
     </style>
   </head>
   <body>
