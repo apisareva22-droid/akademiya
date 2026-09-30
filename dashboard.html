@@ -781,15 +781,37 @@
       }
       .sidebar.collapsed #usersNavItem,
       .sidebar.collapsed #addModuleBtn{
+        display:flex !important;
         font-size:0;
+        justify-content:center;
       }
       .sidebar.collapsed #usersNavItem .nav-icon,
       .sidebar.collapsed #addModuleBtn .nav-icon{
+        display:block;
         font-size:19px;
       }
-      .sidebar.collapsed #usersNavItem,
-      .sidebar.collapsed #addModuleBtn{
+      .sidebar.collapsed .admin-add-item{
+        display:flex !important;
+        padding:11px 8px;
+        border-top:0;
+        background:transparent;
+        color:#5f6670;
+      }
+      body.sidebar-collapsed .add-user-topbtn{
+        font-size:0;
+        width:40px;
+        min-width:40px;
+        padding:7px;
         justify-content:center;
+        gap:0;
+      }
+      body.sidebar-collapsed .add-user-topbtn .add-user-icon{
+        display:block;
+        font-size:16px;
+        line-height:1;
+      }
+      body.sidebar-collapsed .add-user-topbtn .add-user-label{
+        display:none;
       }
       .sidebar.collapsed .sidebar-collapse-btn{
         display:flex;
@@ -887,7 +909,7 @@
       <section class="view" id="view-users">
         <div class="topbar" style="margin-bottom:20px;">
           <h2 style="font-size:20px;color:var(--navy);font-weight:800;">Все пользователи</h2>
-          <button class="btn btn-primary btn-sm add-user-topbtn" id="openAddUserBtn">➕ Добавить пользователя</button>
+          <button class="btn btn-primary btn-sm add-user-topbtn" id="openAddUserBtn"><span class="add-user-icon">➕</span><span class="add-user-label">Добавить пользователя</span></button>
         </div>
         <div class="users-table-wrap">
           <table class="users-table">
@@ -1453,10 +1475,14 @@ function showToast(message, type='success') {
         if (!sidebar || !button) return;
 
         const saved = localStorage.getItem('academySidebarCollapsed') === '1';
-        if (saved) sidebar.classList.add('collapsed');
+        if (saved) {
+          sidebar.classList.add('collapsed');
+          document.body.classList.add('sidebar-collapsed');
+        }
 
         button.addEventListener('click', () => {
           const collapsed = sidebar.classList.toggle('collapsed');
+          document.body.classList.toggle('sidebar-collapsed', collapsed);
           localStorage.setItem('academySidebarCollapsed', collapsed ? '1' : '0');
           button.title = collapsed ? 'Развернуть меню' : 'Свернуть меню';
           button.setAttribute('aria-label', collapsed ? 'Развернуть меню' : 'Свернуть меню');
