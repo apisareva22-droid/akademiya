@@ -779,6 +779,17 @@
       .sidebar.collapsed .order-controls{
         display:none;
       }
+      .sidebar.collapsed .nav-item[data-view="overview"],
+      .sidebar.collapsed #logoutBtn{
+        font-size:0;
+        justify-content:center;
+      }
+      .sidebar.collapsed .nav-item[data-view="overview"] .nav-icon,
+      .sidebar.collapsed #logoutBtn .nav-icon{
+        display:block;
+        font-size:19px;
+      }
+
       .sidebar.collapsed #usersNavItem,
       .sidebar.collapsed #addModuleBtn{
         display:flex !important;
