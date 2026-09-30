@@ -330,6 +330,235 @@
 
 
 
+    
+      /* ===== ALFAPROM MANAGER DASHBOARD — DESIGN V1 ===== */
+      :root{
+        --navy:#20242a;
+        --navy-2:#30343a;
+        --orange:#ff8100;
+        --orange-dark:#e86f00;
+        --gray-bg:#f6f7f9;
+        --gray-line:#e6e8eb;
+        --text:#20242a;
+        --text-light:#747b84;
+        --white:#fff;
+        --radius:18px;
+        --shadow:0 8px 28px rgba(24,31,39,.07);
+      }
+      body{
+        display:block;
+        min-height:100vh;
+        background:var(--gray-bg);
+        color:var(--text);
+      }
+      .sidebar{
+        width:100%;
+        height:auto;
+        min-height:68px;
+        position:sticky;
+        top:0;
+        z-index:50;
+        display:flex;
+        flex-direction:row;
+        align-items:center;
+        gap:10px;
+        padding:12px 24px;
+        background:rgba(255,255,255,.96);
+        color:var(--text);
+        border-bottom:1px solid var(--gray-line);
+        box-shadow:0 4px 18px rgba(24,31,39,.04);
+        overflow:visible;
+      }
+      .sidebar-logo{
+        flex:0 0 auto;
+        display:flex;
+        align-items:center;
+        gap:10px;
+        padding:0 18px 0 0;
+        margin:0 8px 0 0;
+        border:0;
+        color:var(--text);
+        font-size:16px;
+        font-weight:800;
+        white-space:nowrap;
+      }
+      .logo-badge{
+        width:42px;height:42px;border-radius:12px;
+        background:var(--orange);color:#fff;
+        font-size:20px;
+      }
+      .nav-item{
+        flex:0 0 auto;
+        display:flex;
+        align-items:center;
+        gap:8px;
+        padding:9px 12px;
+        border:0;
+        border-radius:10px;
+        color:#5f6670;
+        background:#f7f8fa;
+        font-size:13px;
+        font-weight:700;
+        transition:.18s ease;
+      }
+      .nav-item:hover{
+        background:#fff0e2;
+        color:var(--orange-dark);
+      }
+      .nav-item.active{
+        background:#fff0e2;
+        color:var(--orange-dark);
+        border:0;
+      }
+      .nav-icon{font-size:16px;width:auto;}
+      .nav-divider,.nav-section-label{display:none;}
+      #equipmentNavList{
+        display:flex;
+        align-items:center;
+        gap:6px;
+        flex-wrap:wrap;
+        min-width:0;
+      }
+      #equipmentNavList .nav-item{background:transparent;}
+      #equipmentNavList .nav-item.active{background:#fff0e2;}
+      .admin-add-item{
+        margin:0;
+        padding:9px 12px;
+        border:0;
+        color:var(--orange-dark);
+        background:#fff0e2;
+      }
+      .logout-item{
+        margin:0 0 0 auto;
+        color:#747b84;
+        background:#f7f8fa;
+      }
+      .logout-item:hover{
+        background:#fff0e2;
+        color:var(--orange-dark);
+      }
+      .main{
+        width:100%;
+        max-width:1280px;
+        margin:0 auto;
+        padding:34px 24px 56px;
+      }
+      .topbar{
+        margin-bottom:30px;
+        padding:0;
+      }
+      .topbar h1{
+        font-size:30px;
+        line-height:1.15;
+        font-weight:850;
+        color:var(--text);
+      }
+      .topbar-right{gap:8px;}
+      .admin-chip{
+        background:#fff0e2;
+        color:var(--orange-dark);
+        border-radius:10px;
+        padding:9px 12px;
+      }
+      .user-chip{
+        border:1px solid var(--gray-line);
+        border-radius:12px;
+        padding:6px 12px 6px 6px;
+        box-shadow:none;
+      }
+      .user-avatar{
+        width:34px;height:34px;border-radius:10px;
+        background:var(--orange);color:#fff;
+      }
+      .overview-card,.stage-card,.user-detail-card{
+        border:1px solid var(--gray-line);
+        border-radius:var(--radius);
+        box-shadow:var(--shadow);
+      }
+      .overview-card{
+        padding:24px;
+        margin-bottom:16px;
+      }
+      .overview-avatar,.user-detail-avatar{
+        width:58px;height:58px;border-radius:14px;
+        background:var(--orange);
+        color:#fff;
+      }
+      .overview-name,.user-detail-name{color:var(--text);}
+      .overall-progress-bar{
+        height:9px;
+        background:#eceef1;
+      }
+      .overall-progress-bar i,
+      .progress-line i,
+      .mini-progress-bar i{
+        background:var(--orange);
+      }
+      .modules-grid{
+        grid-template-columns:repeat(4,minmax(0,1fr));
+        gap:16px;
+      }
+      .module-card{
+        border:1px solid var(--gray-line);
+        border-radius:var(--radius);
+        box-shadow:var(--shadow);
+        padding:20px;
+        background:#fff;
+      }
+      .module-card:hover{
+        transform:translateY(-2px);
+        border-color:#ffd2a8;
+        box-shadow:0 12px 34px rgba(24,31,39,.10);
+      }
+      .module-card h4,.stage-card h3,.modal-box h3{color:var(--text);}
+      .module-foot,.stage-card p,.module-sub{color:var(--text-light);}
+      .stage-card{
+        padding:24px;
+        margin-bottom:16px;
+      }
+      .btn-primary{
+        background:var(--orange);
+      }
+      .btn-primary:hover{background:var(--orange-dark);}
+      .btn-secondary{
+        background:#f7f8fa;
+        border-color:var(--gray-line);
+      }
+      .users-table-wrap{
+        border:1px solid var(--gray-line);
+        box-shadow:var(--shadow);
+      }
+      table.users-table th{background:#f7f8fa;}
+      .role-badge{
+        background:#fff0e2;
+        color:var(--orange-dark);
+      }
+      .back-link:hover{color:var(--orange-dark);}
+      .module-progress-row{
+        border-color:var(--gray-line);
+        box-shadow:none;
+      }
+      .modal-box{
+        border-radius:18px;
+        box-shadow:0 20px 60px rgba(24,31,39,.18);
+      }
+      @media(max-width:980px){
+        .sidebar{flex-wrap:wrap;padding:10px 15px;}
+        .sidebar-logo{width:auto;}
+        #equipmentNavList{order:3;width:100%;overflow-x:auto;flex-wrap:nowrap;padding-top:2px;}
+        .logout-item{margin-left:auto;}
+        .modules-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+      }
+      @media(max-width:680px){
+        .sidebar{padding:10px 12px;}
+        .sidebar-logo{font-size:15px;}
+        .sidebar-logo .logo-badge{width:38px;height:38px;}
+        .nav-item{padding:8px 10px;font-size:12px;}
+        .main{padding:25px 15px 45px;}
+        .topbar h1{font-size:25px;}
+        .modules-grid{grid-template-columns:1fr;}
+      }
+
     </style>
     
   </head>
