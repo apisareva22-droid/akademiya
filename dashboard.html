@@ -330,14 +330,542 @@
 
 
 
-    </style>
+    
+      /* ===== ALFAPROM MANAGER DASHBOARD — DESIGN V2 ===== */
+      :root{
+        --navy:#20242a;
+        --navy-2:#30343a;
+        --orange:#ff8100;
+        --orange-dark:#e86f00;
+        --gray-bg:#f6f7f9;
+        --gray-line:#e6e8eb;
+        --text:#20242a;
+        --text-light:#747b84;
+        --white:#fff;
+        --radius:18px;
+        --shadow:0 8px 28px rgba(24,31,39,.07);
+      }
+
+      body{
+        display:flex;
+        flex-direction:row;
+        min-height:100vh;
+        background:var(--gray-bg);
+        color:var(--text);
+      }
+
+      /* Левая навигация — как рабочая панель АЛЬФАПРОМ */
+      .sidebar{
+        width:276px;
+        min-width:276px;
+        height:100vh;
+        position:sticky;
+        top:0;
+        z-index:50;
+        display:flex;
+        flex-direction:column;
+        align-items:stretch;
+        gap:0;
+        padding:20px 14px;
+        background:#fff;
+        color:var(--text);
+        border-right:1px solid var(--gray-line);
+        box-shadow:4px 0 18px rgba(24,31,39,.035);
+        overflow-y:auto;
+        overflow-x:hidden;
+      }
+
+      .sidebar-logo{
+        flex:0 0 auto;
+        display:flex;
+        align-items:center;
+        gap:10px;
+        padding:0 10px 18px;
+        margin:0 0 14px;
+        border-bottom:1px solid var(--gray-line);
+        color:var(--text);
+        font-size:16px;
+        font-weight:800;
+        white-space:nowrap;
+      }
+
+      .logo-badge{
+        width:42px;
+        height:42px;
+        border-radius:12px;
+        background:var(--orange);
+        color:#fff;
+        font-size:20px;
+      }
+
+      .nav-item{
+        width:100%;
+        flex:0 0 auto;
+        display:flex;
+        align-items:center;
+        gap:9px;
+        padding:10px 12px;
+        margin:2px 0;
+        border:0;
+        border-radius:10px;
+        border-left:3px solid transparent;
+        color:#5f6670;
+        background:transparent;
+        font-size:13px;
+        font-weight:700;
+        transition:.18s ease;
+      }
+
+      .nav-item:hover{
+        background:#fff0e2;
+        color:var(--orange-dark);
+      }
+
+      .nav-item.active{
+        background:#fff0e2;
+        color:var(--orange-dark);
+        border-left-color:var(--orange);
+      }
+
+      .nav-icon{
+        font-size:16px;
+        width:20px;
+        text-align:center;
+        flex-shrink:0;
+      }
+
+      .nav-divider{
+        display:block;
+        height:1px;
+        background:var(--gray-line);
+        margin:12px 8px;
+      }
+
+      .nav-section-label{
+        display:block;
+        padding:6px 12px;
+        font-size:10px;
+        text-transform:uppercase;
+        letter-spacing:.06em;
+        color:#9aa0a8;
+        font-weight:800;
+      }
+
+      #equipmentNavList{
+        display:flex;
+        flex-direction:column;
+        align-items:stretch;
+        gap:2px;
+        min-width:0;
+        width:100%;
+      }
+
+      #equipmentNavList .nav-item{
+        background:transparent;
+      }
+
+      #equipmentNavList .nav-item.active{
+        background:#fff0e2;
+      }
+
+      .admin-add-item{
+        margin-top:8px;
+        padding:10px 12px;
+        border:0;
+        border-top:1px dashed var(--gray-line);
+        border-radius:10px;
+        color:var(--orange-dark);
+        background:#fff8f1;
+      }
+
+      .logout-item{
+        margin-top:auto;
+        color:#747b84;
+        background:#f7f8fa;
+      }
+
+      .logout-item:hover{
+        background:#fff0e2;
+        color:var(--orange-dark);
+      }
+
+      /* Контент не растягиваем на весь экран */
+      .main{
+        flex:1;
+        width:auto;
+        max-width:1280px;
+        margin:0 auto;
+        padding:30px 34px 56px;
+      }
+
+      .topbar{
+        margin-bottom:22px;
+        padding:0;
+      }
+
+      .topbar h1{
+        font-size:28px;
+        line-height:1.15;
+        font-weight:850;
+        color:var(--text);
+      }
+
+      .topbar-right{gap:8px;}
+
+      .admin-chip{
+        background:#fff0e2;
+        color:var(--orange-dark);
+        border-radius:10px;
+        padding:8px 12px;
+      }
+
+      .user-chip{
+        border:1px solid var(--gray-line);
+        border-radius:12px;
+        padding:6px 12px 6px 6px;
+        box-shadow:none;
+      }
+
+      .user-avatar{
+        width:34px;
+        height:34px;
+        border-radius:10px;
+        background:var(--orange);
+        color:#fff;
+      }
+
+      /* Верхняя карточка — компактная, а не огромный баннер */
+      .overview-card{
+        max-width:920px;
+        border:1px solid var(--gray-line);
+        border-radius:var(--radius);
+        box-shadow:var(--shadow);
+        padding:20px 24px;
+        margin-bottom:18px;
+      }
+
+      .overview-top{
+        margin-bottom:14px;
+        gap:14px;
+      }
+
+      .overview-avatar,.user-detail-avatar{
+        width:52px;
+        height:52px;
+        border-radius:13px;
+        background:var(--orange);
+        color:#fff;
+      }
+
+      .overview-name,.user-detail-name{color:var(--text);}
+
+      .overall-progress-bar{
+        height:8px;
+        background:#eceef1;
+      }
+
+      .overall-progress-bar i,
+      .progress-line i,
+      .mini-progress-bar i{
+        background:var(--orange);
+      }
+
+      .modules-grid{
+        grid-template-columns:repeat(3,minmax(0,1fr));
+        gap:16px;
+        max-width:1120px;
+      }
+
+      .module-card{
+        border:1px solid var(--gray-line);
+        border-radius:var(--radius);
+        box-shadow:var(--shadow);
+        padding:20px;
+        background:#fff;
+      }
+
+      .module-card:hover{
+        transform:translateY(-2px);
+        border-color:#ffd2a8;
+        box-shadow:0 12px 34px rgba(24,31,39,.10);
+      }
+
+      .module-card h4,.stage-card h3,.modal-box h3{color:var(--text);}
+      .module-foot,.stage-card p,.module-sub{color:var(--text-light);}
+
+      .stage-card,.user-detail-card{
+        border:1px solid var(--gray-line);
+        border-radius:var(--radius);
+        box-shadow:var(--shadow);
+        padding:24px;
+        margin-bottom:16px;
+      }
+
+      .btn-primary{background:var(--orange);}
+      .btn-primary:hover{background:var(--orange-dark);}
+
+      .btn-secondary{
+        background:#f7f8fa;
+        border-color:var(--gray-line);
+      }
+
+      .users-table-wrap{
+        border:1px solid var(--gray-line);
+        box-shadow:var(--shadow);
+      }
+
+      table.users-table th{background:#f7f8fa;}
+
+      .role-badge{
+        background:#fff0e2;
+        color:var(--orange-dark);
+      }
+
+      .back-link:hover{color:var(--orange-dark);}
+
+      .module-progress-row{
+        border-color:var(--gray-line);
+        box-shadow:none;
+      }
+
+      .modal-box{
+        border-radius:18px;
+        box-shadow:0 20px 60px rgba(24,31,39,.18);
+      }
+
+      @media(max-width:980px){
+        body{flex-direction:column;}
+        .sidebar{
+          width:100%;
+          min-width:0;
+          height:auto;
+          min-height:68px;
+          position:relative;
+          flex-direction:row;
+          align-items:center;
+          flex-wrap:wrap;
+          padding:10px 15px;
+          overflow:visible;
+        }
+        .sidebar-logo{
+          width:auto;
+          padding:0;
+          margin:0 8px 0 0;
+          border:0;
+        }
+        .nav-item{
+          width:auto;
+          border-left:0;
+          border-bottom:3px solid transparent;
+        }
+        .nav-item.active{
+          border-left:0;
+          border-bottom-color:var(--orange);
+        }
+        .nav-divider,.nav-section-label{display:none;}
+        #equipmentNavList{
+          order:3;
+          width:100%;
+          flex-direction:row;
+          overflow-x:auto;
+          flex-wrap:nowrap;
+          padding-top:2px;
+        }
+        .logout-item{margin-left:auto;margin-top:0;}
+        .main{padding:25px 20px 45px;}
+        .overview-card{max-width:none;}
+        .modules-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-width:none;}
+      }
+
+      @media(max-width:680px){
+        .sidebar{padding:10px 12px;}
+        .sidebar-logo{font-size:15px;}
+        .sidebar-logo .logo-badge{width:38px;height:38px;}
+        .nav-item{padding:8px 10px;font-size:12px;}
+        .main{padding:22px 15px 40px;}
+        .topbar h1{font-size:25px;}
+        .modules-grid{grid-template-columns:1fr;}
+      }
+    
+      /* ===== SMALL UI FIXES V3 ===== */
+      .sidebar-logo{
+        justify-content:space-between;
+        gap:8px;
+      }
+      .logo-brand{
+        display:flex;
+        flex-direction:column;
+        min-width:0;
+        line-height:1.05;
+      }
+      .logo-brand-top{
+        font-size:13px;
+        font-weight:600;
+        color:#747b84;
+      }
+      .logo-brand-bottom{
+        font-size:18px;
+        font-weight:850;
+        color:var(--text);
+        letter-spacing:.01em;
+      }
+      .sidebar-collapse-btn{
+        width:30px;
+        height:30px;
+        flex:0 0 30px;
+        border:1px solid var(--gray-line);
+        background:#fff;
+        color:#747b84;
+        border-radius:8px;
+        cursor:pointer;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:21px;
+        line-height:1;
+        transition:.18s ease;
+      }
+      .sidebar-collapse-btn:hover{
+        color:var(--orange-dark);
+        border-color:#ffd2a8;
+        background:#fff8f1;
+      }
+
+      /* Отдельная прокрутка списка оборудования + фирменный оранжевый скроллбар */
+      #equipmentNavList{
+        max-height:calc(100vh - 250px);
+        overflow-y:auto;
+        overflow-x:hidden;
+        scrollbar-width:thin;
+        scrollbar-color:var(--orange) #f1f2f4;
+        padding-right:4px;
+      }
+      #equipmentNavList::-webkit-scrollbar{width:7px;}
+      #equipmentNavList::-webkit-scrollbar-track{background:#f1f2f4;border-radius:10px;}
+      #equipmentNavList::-webkit-scrollbar-thumb{background:var(--orange);border-radius:10px;}
+      #equipmentNavList::-webkit-scrollbar-thumb:hover{background:var(--orange-dark);}
+
+      /* Кнопки изменения порядка всегда заметны, а не только при наведении */
+      .order-arrow-btn{
+        border:1px solid #d7dbe0;
+        background:#fff;
+        color:#5f6670;
+        box-shadow:0 1px 3px rgba(24,31,39,.08);
+      }
+      .order-arrow-btn:hover:not(:disabled){
+        background:var(--orange);
+        border-color:var(--orange);
+        color:#fff;
+        box-shadow:none;
+      }
+
+      /* Свернутое состояние: в меню остаются только иконки/эмодзи */
+      .sidebar.collapsed{
+        width:78px;
+        min-width:78px;
+        padding-left:10px;
+        padding-right:10px;
+      }
+      .sidebar.collapsed .sidebar-logo{
+        justify-content:center;
+        padding-left:0;
+        padding-right:0;
+      }
+      .sidebar.collapsed .logo-brand,
+      .sidebar.collapsed .nav-item-title,
+      .sidebar.collapsed .badge-progress,
+      .sidebar.collapsed .nav-section-label,
+      .sidebar.collapsed .admin-add-item,
+      .sidebar.collapsed .order-controls{
+        display:none;
+      }
+      .sidebar.collapsed .nav-item[data-view="overview"],
+      .sidebar.collapsed #logoutBtn{
+        font-size:0;
+        justify-content:center;
+      }
+      .sidebar.collapsed .nav-item[data-view="overview"] .nav-icon,
+      .sidebar.collapsed #logoutBtn .nav-icon{
+        display:block;
+        font-size:19px;
+      }
+
+      .sidebar.collapsed #usersNavItem,
+      .sidebar.collapsed #addModuleBtn{
+        display:flex !important;
+        font-size:0;
+        justify-content:center;
+      }
+      .sidebar.collapsed #usersNavItem .nav-icon,
+      .sidebar.collapsed #addModuleBtn .nav-icon{
+        display:block;
+        font-size:19px;
+      }
+      .sidebar.collapsed .admin-add-item{
+        display:flex !important;
+        padding:11px 8px;
+        border-top:0;
+        background:transparent;
+        color:#5f6670;
+      }
+      body.sidebar-collapsed .add-user-topbtn{
+        font-size:0;
+        width:40px;
+        min-width:40px;
+        padding:7px;
+        justify-content:center;
+        gap:0;
+      }
+      body.sidebar-collapsed .add-user-topbtn .add-user-icon{
+        display:block;
+        font-size:16px;
+        line-height:1;
+      }
+      body.sidebar-collapsed .add-user-topbtn .add-user-label{
+        display:none;
+      }
+      .sidebar.collapsed .sidebar-collapse-btn{
+        display:flex;
+        margin:0 auto;
+        transform:rotate(180deg);
+      }
+      .sidebar.collapsed .nav-item{
+        justify-content:center;
+        padding:11px 8px;
+        border-left:0;
+      }
+      .sidebar.collapsed .nav-item-main{
+        justify-content:center;
+      }
+      .sidebar.collapsed .nav-icon{
+        width:auto;
+        font-size:19px;
+      }
+      .sidebar.collapsed .nav-divider{margin-left:4px;margin-right:4px;}
+      .sidebar.collapsed #equipmentNavList{
+        max-height:calc(100vh - 190px);
+        padding-right:0;
+      }
+
+      @media(max-width:980px){
+        .sidebar-collapse-btn{display:none;}
+        #equipmentNavList{max-height:none;overflow-y:hidden;}
+        .sidebar.collapsed{width:100%;min-width:0;padding:10px 15px;}
+        .sidebar.collapsed .logo-brand,
+        .sidebar.collapsed .nav-item-title,
+        .sidebar.collapsed .badge-progress,
+        .sidebar.collapsed .nav-section-label,
+        .sidebar.collapsed .admin-add-item,
+        .sidebar.collapsed .order-controls{display:initial;}
+      }
+</style>
     
   </head>
   <body>
     <div id="toastContainer"></div>
 
     <aside class="sidebar">
-      <div class="sidebar-logo"><div class="logo-badge">А</div>Академия АЛЬФАПРОМ</div>
+      <div class="sidebar-logo"><div class="logo-brand"><span class="logo-brand-top">Академия</span><span class="logo-brand-bottom">АЛЬФАПРОМ</span></div><button type="button" class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="Свернуть меню" aria-label="Свернуть меню">‹</button></div>
 
       <div class="nav-item active" data-view="overview">
         <span class="nav-icon">👤</span> Личный кабинет
@@ -392,7 +920,7 @@
       <section class="view" id="view-users">
         <div class="topbar" style="margin-bottom:20px;">
           <h2 style="font-size:20px;color:var(--navy);font-weight:800;">Все пользователи</h2>
-          <button class="btn btn-primary btn-sm add-user-topbtn" id="openAddUserBtn">➕ Добавить пользователя</button>
+          <button class="btn btn-primary btn-sm add-user-topbtn" id="openAddUserBtn"><span class="add-user-icon">➕</span><span class="add-user-label">Добавить пользователя</span></button>
         </div>
         <div class="users-table-wrap">
           <table class="users-table">
@@ -952,7 +1480,28 @@ function showToast(message, type='success') {
       }
 
 
+      function setupSidebarCollapse() {
+        const sidebar = document.querySelector('.sidebar');
+        const button = document.getElementById('sidebarCollapseBtn');
+        if (!sidebar || !button) return;
+
+        const saved = localStorage.getItem('academySidebarCollapsed') === '1';
+        if (saved) {
+          sidebar.classList.add('collapsed');
+          document.body.classList.add('sidebar-collapsed');
+        }
+
+        button.addEventListener('click', () => {
+          const collapsed = sidebar.classList.toggle('collapsed');
+          document.body.classList.toggle('sidebar-collapsed', collapsed);
+          localStorage.setItem('academySidebarCollapsed', collapsed ? '1' : '0');
+          button.title = collapsed ? 'Развернуть меню' : 'Свернуть меню';
+          button.setAttribute('aria-label', collapsed ? 'Развернуть меню' : 'Свернуть меню');
+        });
+      }
+
       function setupStaticHandlers() {
+        setupSidebarCollapse();
         document.querySelector('.nav-item[data-view="overview"]').addEventListener('click', function() {
           document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
           this.classList.add('active');
