@@ -331,7 +331,7 @@
 
 
     
-      /* ===== ALFAPROM MANAGER DASHBOARD — DESIGN V1 ===== */
+      /* ===== ALFAPROM MANAGER DASHBOARD — DESIGN V2 ===== */
       :root{
         --navy:#20242a;
         --navy-2:#30343a;
@@ -345,159 +345,237 @@
         --radius:18px;
         --shadow:0 8px 28px rgba(24,31,39,.07);
       }
+
       body{
-        display:block;
+        display:flex;
+        flex-direction:row;
         min-height:100vh;
         background:var(--gray-bg);
         color:var(--text);
       }
+
+      /* Левая навигация — как рабочая панель АЛЬФАПРОМ */
       .sidebar{
-        width:100%;
-        height:auto;
-        min-height:68px;
+        width:276px;
+        min-width:276px;
+        height:100vh;
         position:sticky;
         top:0;
         z-index:50;
         display:flex;
-        flex-direction:row;
-        align-items:center;
-        gap:10px;
-        padding:12px 24px;
-        background:rgba(255,255,255,.96);
+        flex-direction:column;
+        align-items:stretch;
+        gap:0;
+        padding:20px 14px;
+        background:#fff;
         color:var(--text);
-        border-bottom:1px solid var(--gray-line);
-        box-shadow:0 4px 18px rgba(24,31,39,.04);
-        overflow:visible;
+        border-right:1px solid var(--gray-line);
+        box-shadow:4px 0 18px rgba(24,31,39,.035);
+        overflow-y:auto;
+        overflow-x:hidden;
       }
+
       .sidebar-logo{
         flex:0 0 auto;
         display:flex;
         align-items:center;
         gap:10px;
-        padding:0 18px 0 0;
-        margin:0 8px 0 0;
-        border:0;
+        padding:0 10px 18px;
+        margin:0 0 14px;
+        border-bottom:1px solid var(--gray-line);
         color:var(--text);
         font-size:16px;
         font-weight:800;
         white-space:nowrap;
       }
+
       .logo-badge{
-        width:42px;height:42px;border-radius:12px;
-        background:var(--orange);color:#fff;
+        width:42px;
+        height:42px;
+        border-radius:12px;
+        background:var(--orange);
+        color:#fff;
         font-size:20px;
       }
+
       .nav-item{
+        width:100%;
         flex:0 0 auto;
         display:flex;
         align-items:center;
-        gap:8px;
-        padding:9px 12px;
+        gap:9px;
+        padding:10px 12px;
+        margin:2px 0;
         border:0;
         border-radius:10px;
+        border-left:3px solid transparent;
         color:#5f6670;
-        background:#f7f8fa;
+        background:transparent;
         font-size:13px;
         font-weight:700;
         transition:.18s ease;
       }
+
       .nav-item:hover{
         background:#fff0e2;
         color:var(--orange-dark);
       }
+
       .nav-item.active{
         background:#fff0e2;
         color:var(--orange-dark);
-        border:0;
+        border-left-color:var(--orange);
       }
-      .nav-icon{font-size:16px;width:auto;}
-      .nav-divider,.nav-section-label{display:none;}
+
+      .nav-icon{
+        font-size:16px;
+        width:20px;
+        text-align:center;
+        flex-shrink:0;
+      }
+
+      .nav-divider{
+        display:block;
+        height:1px;
+        background:var(--gray-line);
+        margin:12px 8px;
+      }
+
+      .nav-section-label{
+        display:block;
+        padding:6px 12px;
+        font-size:10px;
+        text-transform:uppercase;
+        letter-spacing:.06em;
+        color:#9aa0a8;
+        font-weight:800;
+      }
+
       #equipmentNavList{
         display:flex;
-        align-items:center;
-        gap:6px;
-        flex-wrap:wrap;
+        flex-direction:column;
+        align-items:stretch;
+        gap:2px;
         min-width:0;
+        width:100%;
       }
-      #equipmentNavList .nav-item{background:transparent;}
-      #equipmentNavList .nav-item.active{background:#fff0e2;}
-      .admin-add-item{
-        margin:0;
-        padding:9px 12px;
-        border:0;
-        color:var(--orange-dark);
+
+      #equipmentNavList .nav-item{
+        background:transparent;
+      }
+
+      #equipmentNavList .nav-item.active{
         background:#fff0e2;
       }
+
+      .admin-add-item{
+        margin-top:8px;
+        padding:10px 12px;
+        border:0;
+        border-top:1px dashed var(--gray-line);
+        border-radius:10px;
+        color:var(--orange-dark);
+        background:#fff8f1;
+      }
+
       .logout-item{
-        margin:0 0 0 auto;
+        margin-top:auto;
         color:#747b84;
         background:#f7f8fa;
       }
+
       .logout-item:hover{
         background:#fff0e2;
         color:var(--orange-dark);
       }
+
+      /* Контент не растягиваем на весь экран */
       .main{
-        width:100%;
+        flex:1;
+        width:auto;
         max-width:1280px;
         margin:0 auto;
-        padding:34px 24px 56px;
+        padding:30px 34px 56px;
       }
+
       .topbar{
-        margin-bottom:30px;
+        margin-bottom:22px;
         padding:0;
       }
+
       .topbar h1{
-        font-size:30px;
+        font-size:28px;
         line-height:1.15;
         font-weight:850;
         color:var(--text);
       }
+
       .topbar-right{gap:8px;}
+
       .admin-chip{
         background:#fff0e2;
         color:var(--orange-dark);
         border-radius:10px;
-        padding:9px 12px;
+        padding:8px 12px;
       }
+
       .user-chip{
         border:1px solid var(--gray-line);
         border-radius:12px;
         padding:6px 12px 6px 6px;
         box-shadow:none;
       }
+
       .user-avatar{
-        width:34px;height:34px;border-radius:10px;
-        background:var(--orange);color:#fff;
-      }
-      .overview-card,.stage-card,.user-detail-card{
-        border:1px solid var(--gray-line);
-        border-radius:var(--radius);
-        box-shadow:var(--shadow);
-      }
-      .overview-card{
-        padding:24px;
-        margin-bottom:16px;
-      }
-      .overview-avatar,.user-detail-avatar{
-        width:58px;height:58px;border-radius:14px;
+        width:34px;
+        height:34px;
+        border-radius:10px;
         background:var(--orange);
         color:#fff;
       }
+
+      /* Верхняя карточка — компактная, а не огромный баннер */
+      .overview-card{
+        max-width:920px;
+        border:1px solid var(--gray-line);
+        border-radius:var(--radius);
+        box-shadow:var(--shadow);
+        padding:20px 24px;
+        margin-bottom:18px;
+      }
+
+      .overview-top{
+        margin-bottom:14px;
+        gap:14px;
+      }
+
+      .overview-avatar,.user-detail-avatar{
+        width:52px;
+        height:52px;
+        border-radius:13px;
+        background:var(--orange);
+        color:#fff;
+      }
+
       .overview-name,.user-detail-name{color:var(--text);}
+
       .overall-progress-bar{
-        height:9px;
+        height:8px;
         background:#eceef1;
       }
+
       .overall-progress-bar i,
       .progress-line i,
       .mini-progress-bar i{
         background:var(--orange);
       }
+
       .modules-grid{
-        grid-template-columns:repeat(4,minmax(0,1fr));
+        grid-template-columns:repeat(3,minmax(0,1fr));
         gap:16px;
+        max-width:1120px;
       }
+
       .module-card{
         border:1px solid var(--gray-line);
         border-radius:var(--radius);
@@ -505,60 +583,109 @@
         padding:20px;
         background:#fff;
       }
+
       .module-card:hover{
         transform:translateY(-2px);
         border-color:#ffd2a8;
         box-shadow:0 12px 34px rgba(24,31,39,.10);
       }
+
       .module-card h4,.stage-card h3,.modal-box h3{color:var(--text);}
       .module-foot,.stage-card p,.module-sub{color:var(--text-light);}
-      .stage-card{
+
+      .stage-card,.user-detail-card{
+        border:1px solid var(--gray-line);
+        border-radius:var(--radius);
+        box-shadow:var(--shadow);
         padding:24px;
         margin-bottom:16px;
       }
-      .btn-primary{
-        background:var(--orange);
-      }
+
+      .btn-primary{background:var(--orange);}
       .btn-primary:hover{background:var(--orange-dark);}
+
       .btn-secondary{
         background:#f7f8fa;
         border-color:var(--gray-line);
       }
+
       .users-table-wrap{
         border:1px solid var(--gray-line);
         box-shadow:var(--shadow);
       }
+
       table.users-table th{background:#f7f8fa;}
+
       .role-badge{
         background:#fff0e2;
         color:var(--orange-dark);
       }
+
       .back-link:hover{color:var(--orange-dark);}
+
       .module-progress-row{
         border-color:var(--gray-line);
         box-shadow:none;
       }
+
       .modal-box{
         border-radius:18px;
         box-shadow:0 20px 60px rgba(24,31,39,.18);
       }
+
       @media(max-width:980px){
-        .sidebar{flex-wrap:wrap;padding:10px 15px;}
-        .sidebar-logo{width:auto;}
-        #equipmentNavList{order:3;width:100%;overflow-x:auto;flex-wrap:nowrap;padding-top:2px;}
-        .logout-item{margin-left:auto;}
-        .modules-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+        body{flex-direction:column;}
+        .sidebar{
+          width:100%;
+          min-width:0;
+          height:auto;
+          min-height:68px;
+          position:relative;
+          flex-direction:row;
+          align-items:center;
+          flex-wrap:wrap;
+          padding:10px 15px;
+          overflow:visible;
+        }
+        .sidebar-logo{
+          width:auto;
+          padding:0;
+          margin:0 8px 0 0;
+          border:0;
+        }
+        .nav-item{
+          width:auto;
+          border-left:0;
+          border-bottom:3px solid transparent;
+        }
+        .nav-item.active{
+          border-left:0;
+          border-bottom-color:var(--orange);
+        }
+        .nav-divider,.nav-section-label{display:none;}
+        #equipmentNavList{
+          order:3;
+          width:100%;
+          flex-direction:row;
+          overflow-x:auto;
+          flex-wrap:nowrap;
+          padding-top:2px;
+        }
+        .logout-item{margin-left:auto;margin-top:0;}
+        .main{padding:25px 20px 45px;}
+        .overview-card{max-width:none;}
+        .modules-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-width:none;}
       }
+
       @media(max-width:680px){
         .sidebar{padding:10px 12px;}
         .sidebar-logo{font-size:15px;}
         .sidebar-logo .logo-badge{width:38px;height:38px;}
         .nav-item{padding:8px 10px;font-size:12px;}
-        .main{padding:25px 15px 45px;}
+        .main{padding:22px 15px 40px;}
         .topbar h1{font-size:25px;}
         .modules-grid{grid-template-columns:1fr;}
       }
-
     </style>
     
   </head>
