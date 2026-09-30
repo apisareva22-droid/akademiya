@@ -686,14 +686,141 @@
         .topbar h1{font-size:25px;}
         .modules-grid{grid-template-columns:1fr;}
       }
-    </style>
+    
+      /* ===== SMALL UI FIXES V3 ===== */
+      .sidebar-logo{
+        justify-content:space-between;
+        gap:8px;
+      }
+      .logo-brand{
+        display:flex;
+        flex-direction:column;
+        min-width:0;
+        line-height:1.05;
+      }
+      .logo-brand-top{
+        font-size:13px;
+        font-weight:600;
+        color:#747b84;
+      }
+      .logo-brand-bottom{
+        font-size:18px;
+        font-weight:850;
+        color:var(--text);
+        letter-spacing:.01em;
+      }
+      .sidebar-collapse-btn{
+        width:30px;
+        height:30px;
+        flex:0 0 30px;
+        border:1px solid var(--gray-line);
+        background:#fff;
+        color:#747b84;
+        border-radius:8px;
+        cursor:pointer;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:21px;
+        line-height:1;
+        transition:.18s ease;
+      }
+      .sidebar-collapse-btn:hover{
+        color:var(--orange-dark);
+        border-color:#ffd2a8;
+        background:#fff8f1;
+      }
+
+      /* Отдельная прокрутка списка оборудования + фирменный оранжевый скроллбар */
+      #equipmentNavList{
+        max-height:calc(100vh - 250px);
+        overflow-y:auto;
+        overflow-x:hidden;
+        scrollbar-width:thin;
+        scrollbar-color:var(--orange) #f1f2f4;
+        padding-right:4px;
+      }
+      #equipmentNavList::-webkit-scrollbar{width:7px;}
+      #equipmentNavList::-webkit-scrollbar-track{background:#f1f2f4;border-radius:10px;}
+      #equipmentNavList::-webkit-scrollbar-thumb{background:var(--orange);border-radius:10px;}
+      #equipmentNavList::-webkit-scrollbar-thumb:hover{background:var(--orange-dark);}
+
+      /* Кнопки изменения порядка всегда заметны, а не только при наведении */
+      .order-arrow-btn{
+        border:1px solid #d7dbe0;
+        background:#fff;
+        color:#5f6670;
+        box-shadow:0 1px 3px rgba(24,31,39,.08);
+      }
+      .order-arrow-btn:hover:not(:disabled){
+        background:var(--orange);
+        border-color:var(--orange);
+        color:#fff;
+        box-shadow:none;
+      }
+
+      /* Свернутое состояние: в меню остаются только иконки/эмодзи */
+      .sidebar.collapsed{
+        width:78px;
+        min-width:78px;
+        padding-left:10px;
+        padding-right:10px;
+      }
+      .sidebar.collapsed .sidebar-logo{
+        justify-content:center;
+        padding-left:0;
+        padding-right:0;
+      }
+      .sidebar.collapsed .logo-brand,
+      .sidebar.collapsed .nav-item-title,
+      .sidebar.collapsed .badge-progress,
+      .sidebar.collapsed .nav-section-label,
+      .sidebar.collapsed .admin-add-item,
+      .sidebar.collapsed .order-controls{
+        display:none;
+      }
+      .sidebar.collapsed .sidebar-collapse-btn{
+        display:flex;
+        margin:0 auto;
+        transform:rotate(180deg);
+      }
+      .sidebar.collapsed .nav-item{
+        justify-content:center;
+        padding:11px 8px;
+        border-left:0;
+      }
+      .sidebar.collapsed .nav-item-main{
+        justify-content:center;
+      }
+      .sidebar.collapsed .nav-icon{
+        width:auto;
+        font-size:19px;
+      }
+      .sidebar.collapsed .nav-divider{margin-left:4px;margin-right:4px;}
+      .sidebar.collapsed #equipmentNavList{
+        max-height:calc(100vh - 190px);
+        padding-right:0;
+      }
+
+      @media(max-width:980px){
+        .sidebar-collapse-btn{display:none;}
+        #equipmentNavList{max-height:none;overflow-y:hidden;}
+        .sidebar.collapsed{width:100%;min-width:0;padding:10px 15px;}
+        .sidebar.collapsed .logo-brand,
+        .sidebar.collapsed .nav-item-title,
+        .sidebar.collapsed .badge-progress,
+        .sidebar.collapsed .nav-section-label,
+        .sidebar.collapsed .admin-add-item,
+        .sidebar.collapsed .order-controls{display:initial;}
+      }
+</style>
     
   </head>
   <body>
     <div id="toastContainer"></div>
 
     <aside class="sidebar">
-      <div class="sidebar-logo"><div class="logo-badge">А</div>Академия АЛЬФАПРОМ</div>
+      <div class="sidebar-logo"><div class="logo-brand"><span class="logo-brand-top">Академия</span><span class="logo-brand-bottom">АЛЬФАПРОМ</span></div><button type="button" class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="Свернуть меню" aria-label="Свернуть меню">‹</button></div>
 
       <div class="nav-item active" data-view="overview">
         <span class="nav-icon">👤</span> Личный кабинет
@@ -1308,7 +1435,24 @@ function showToast(message, type='success') {
       }
 
 
+      function setupSidebarCollapse() {
+        const sidebar = document.querySelector('.sidebar');
+        const button = document.getElementById('sidebarCollapseBtn');
+        if (!sidebar || !button) return;
+
+        const saved = localStorage.getItem('academySidebarCollapsed') === '1';
+        if (saved) sidebar.classList.add('collapsed');
+
+        button.addEventListener('click', () => {
+          const collapsed = sidebar.classList.toggle('collapsed');
+          localStorage.setItem('academySidebarCollapsed', collapsed ? '1' : '0');
+          button.title = collapsed ? 'Развернуть меню' : 'Свернуть меню';
+          button.setAttribute('aria-label', collapsed ? 'Развернуть меню' : 'Свернуть меню');
+        });
+      }
+
       function setupStaticHandlers() {
+        setupSidebarCollapse();
         document.querySelector('.nav-item[data-view="overview"]').addEventListener('click', function() {
           document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
           this.classList.add('active');
