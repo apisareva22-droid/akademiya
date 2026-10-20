@@ -22,9 +22,65 @@
     if (text !== undefined) node.textContent = text;
     return node;
   };
+  // Reveal mentor replies in order; a new action completes the previous reply.
+  const replyQueue = [];
+  let replyTimer = null;
+  function followReply(change) {
+    const atBottom = messages.scrollHeight - messages.scrollTop - messages.clientHeight < 70;
+    change();
+    if (atBottom) messages.scrollTop = messages.scrollHeight;
+  }
+  function completeReply(reply) {
+    reply.bubble.hidden = false;
+    reply.words.textContent = reply.text;
+    reply.cursor.remove();
+    reply.bubble.setAttribute("aria-busy", "false");
+    for (const child of reply.bubble.children) child.hidden = false;
+  }
+  function finishReplies() {
+    clearTimeout(replyTimer);
+    replyTimer = null;
+    followReply(() => {
+      for (const reply of replyQueue) completeReply(reply);
+      replyQueue.length = 0;
+    });
+  }
+  function typeReply() {
+    const reply = replyQueue[0];
+    if (!reply) { replyTimer = null; return; }
+    followReply(() => {
+      reply.bubble.hidden = false;
+      const word = reply.tokens[reply.index++];
+      reply.words.textContent += word;
+    });
+    if (reply.index === reply.tokens.length) {
+      followReply(() => completeReply(reply));
+      replyQueue.shift();
+      replyTimer = replyQueue.length ? setTimeout(typeReply, 300) : null;
+      return;
+    }
+    const word = reply.tokens[reply.index - 1].trim();
+    const pause = /[.!?…][»")]*$/.test(word) ? 230 : /[,;:—]$/.test(word) ? 120 : 45;
+    replyTimer = setTimeout(typeReply, pause);
+  }
   function say(text, from = "mentor") {
-    const bubble = make("div", "alpha-message " + from, text);
+    if (from !== "mentor") finishReplies();
+    const bubble = make("div", "alpha-message " + from);
+    const words = make("span", "", "");
+    bubble.appendChild(words);
     messages.appendChild(bubble);
+    if (from !== "mentor" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      words.textContent = text;
+    } else {
+      const cursor = make("span", "", " ▍");
+      cursor.setAttribute("aria-hidden", "true");
+      cursor.title = "Альфа печатает…";
+      bubble.appendChild(cursor);
+      bubble.setAttribute("aria-busy", "true");
+      bubble.hidden = replyQueue.length > 0;
+      replyQueue.push({bubble, words, cursor, text, tokens: text.match(/\S+\s*/g) || [text], index: 0});
+      if (replyTimer === null) replyTimer = setTimeout(typeReply, 250);
+    }
     messages.scrollTop = messages.scrollHeight;
     return bubble;
   }
@@ -33,7 +89,7 @@
     for (const [title, fn] of items) {
       const b = make("button", "", title);
       b.type = "button";
-      b.addEventListener("click", fn);
+      b.addEventListener("click", () => { finishReplies(); fn(); });
       actions.appendChild(b);
     }
   }
@@ -68,6 +124,7 @@
     if (!matching.length) {
       say("Такого названия среди загруженных учебных модулей я не нашла. Попробуй другое слово или открой полный список.");
     } else {
+      list.hidden = bubble.getAttribute("aria-busy") === "true";
       bubble.appendChild(list);
       if (matching.length > 15) say("Показала первые 15 разделов. Напиши название оборудования, чтобы уточнить поиск.");
     }
