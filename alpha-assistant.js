@@ -110,7 +110,7 @@
     say(question, "employee");
     input.value = "";
     const normalized = question.toLocaleLowerCase("ru").replace(/ё/g,"е");
-    const match = modules.find(m => normalized.includes(m.title.toLocaleLowerCase("ru").replace(/ё/g,"е")));
+    const match = modules.find(m => { const title = m.title.toLocaleLowerCase("ru").replace(/ё/g,"е"); return normalized.includes(title) || (normalized.length > 3 && title.includes(normalized)); });
     if (match) {
       say("В Академии есть раздел «" + match.title + "». Открыть его?");
       buttons([["Открыть «" + match.title + "»", () => navigate(match)], ["Другие разделы", () => showModules()]]);
