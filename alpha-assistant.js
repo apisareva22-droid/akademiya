@@ -33,7 +33,6 @@
   function completeReply(reply) {
     reply.bubble.hidden = false;
     reply.words.textContent = reply.text;
-    reply.cursor.remove();
     reply.bubble.setAttribute("aria-busy", "false");
     for (const child of reply.bubble.children) child.hidden = false;
   }
@@ -72,13 +71,9 @@
     if (from !== "mentor" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       words.textContent = text;
     } else {
-      const cursor = make("span", "", " ▍");
-      cursor.setAttribute("aria-hidden", "true");
-      cursor.title = "Альфа печатает…";
-      bubble.appendChild(cursor);
       bubble.setAttribute("aria-busy", "true");
       bubble.hidden = replyQueue.length > 0;
-      replyQueue.push({bubble, words, cursor, text, tokens: text.match(/\S+\s*/g) || [text], index: 0});
+      replyQueue.push({bubble, words, text, tokens: text.match(/\S+\s*/g) || [text], index: 0});
       if (replyTimer === null) replyTimer = setTimeout(typeReply, 250);
     }
     messages.scrollTop = messages.scrollHeight;
