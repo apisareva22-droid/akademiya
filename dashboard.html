@@ -860,6 +860,8 @@
       }
 </style>
     
+    <link rel="stylesheet" href="./alpha-assistant.css" />
+    <script src="./alpha-assistant.js" defer></script>
   </head>
   <body>
     <div id="toastContainer"></div>
@@ -1260,6 +1262,22 @@ function showToast(message, type='success') {
         renderSidebar();
         renderOverview();
         setupStaticHandlers();
+        // Alfa starts only after Firebase has confirmed authentication and loaded learning data.
+        if (window.AlphaAssistant) {
+          window.AlphaAssistant.mount({
+            name: userData?.name || "",
+            modules: sortedModuleKeys().map(key => ({
+              id: key, title: contentData[key].title, progress: getModuleProgress(key)
+            })),
+            onNavigate: (key) => {
+              const nav = Array.from(document.querySelectorAll("#equipmentNavList .nav-item"))
+                .find(node => node.dataset.module === key);
+              if (!nav) return false;
+              nav.click();
+              return true;
+            }
+          });
+        }
       });
 
       document.getElementById('logoutBtn').addEventListener('click', async () => {
@@ -1672,6 +1690,11 @@ function showToast(message, type='success') {
         const overallPct = Math.round(totalPct / keys.length);
         document.getElementById('overallProgressPct').textContent = overallPct + '%';
         document.getElementById('overallProgressBar').style.width = overallPct + '%';
+        if (window.AlphaAssistant) {
+          window.AlphaAssistant.updateModules(sortedModuleKeys().map(key => ({
+            id: key, title: contentData[key].title, progress: getModuleProgress(key)
+          })));
+        }
       }
 
       function switchView(name) {
