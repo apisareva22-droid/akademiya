@@ -1,0 +1,34 @@
+/* Alfa mentor widget; intentionally isolated from Academy styles */
+.alpha-assistant, .alpha-assistant * { box-sizing: border-box; }
+.alpha-assistant { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; color: #232733; }
+.alpha-assistant[hidden], .alpha-assistant [hidden] { display:none !important; }
+.alpha-launcher { position:fixed; z-index:900; right:22px; bottom:20px; display:flex; align-items:center; gap:10px; padding:7px 15px 7px 7px; border:2px solid #fff; border-radius:999px; box-shadow:0 8px 30px rgba(30,32,38,.23); background:#ff8100; color:#fff; font-size:14px; font-weight:800; cursor:pointer; }
+.alpha-launcher:hover { background:#e87300; transform:translateY(-2px); }
+.alpha-photo { width:46px; height:46px; object-fit:cover; object-position:50% 25%; flex-shrink:0; border-radius:50%; background:#fff3e5; }
+.alpha-panel { position:fixed; z-index:900; right:20px; bottom:84px; width:min(392px,calc(100vw - 32px)); max-height:min(690px,calc(100dvh - 110px)); display:flex; flex-direction:column; overflow:hidden; background:#fff; border:1px solid #e2e5ea; border-radius:20px; box-shadow:0 15px 55px rgba(27,30,35,.25); }
+.alpha-head { display:flex; gap:12px; align-items:center; padding:15px 15px; background:linear-gradient(120deg,#fff7ee,#fff); border-bottom:1px solid #f1e3d4; }
+.alpha-head .alpha-photo { width:58px; height:58px; border:2px solid #ffb76e; }
+.alpha-title { flex:1; min-width:0; }
+.alpha-title strong { display:block; font-size:18px; font-weight:800; }
+.alpha-title small { display:block; margin-top:3px; color:#6b7280; line-height:1.4; }
+.alpha-close { width:34px;height:34px; border-radius:9px; border:1px solid #eadfce; background:#fff; color:#4a4d55; font-size:22px;cursor:pointer; }
+.alpha-messages { flex:1; min-height:110px; overflow-y:auto; padding:16px 14px; display:flex; flex-direction:column; gap:12px; scroll-behavior:smooth; }
+.alpha-message { max-width:92%; padding:12px 14px; font-size:13.5px; line-height:1.55; border-radius:15px; white-space:pre-line; word-break:break-word; }
+.alpha-message.mentor { background:#f6f7f9; border:1px solid #e6e8ec; align-self:flex-start; border-top-left-radius:4px; }
+.alpha-message.employee { background:#ff8100; color:#fff; align-self:flex-end; border-top-right-radius:4px; }
+.alpha-actions { display:flex; flex-wrap:wrap; gap:7px; padding:10px 14px 13px; border-top:1px solid #f0f1f3; max-height:154px; overflow-y:auto; }
+.alpha-actions button, .alpha-module-link { border:1px solid #ffd0a2; background:#fff9f3; border-radius:18px; color:#995000; font-weight:650; font-size:12.5px; padding:8px 11px; cursor:pointer; text-align:left; }
+.alpha-actions button:hover, .alpha-module-link:hover { background:#ffe9d1; }
+.alpha-modules { display:flex; flex-direction:column; gap:7px; align-items:flex-start; }
+.alpha-module-link { border-radius:10px; max-width:100%; }
+.alpha-input-wrap { display:flex; gap:8px; padding:12px 14px; border-top:1px solid #e9e9ef; }
+.alpha-input { width:100%; min-width:0; min-height:40px; border:1px solid #dadee4; border-radius:10px; padding:8px 10px; outline:0; font:inherit; font-size:13px; }
+.alpha-input:focus { border-color:#ff8100; box-shadow:0 0 0 3px #ff810022; }
+.alpha-send { border:0; border-radius:10px; padding:0 13px; background:#ff8100; color:#fff; font-size:19px; cursor:pointer; }
+.alpha-disclaimer { padding:0 14px 10px; color:#787f8b; font-size:10.5px; line-height:1.4; }
+@media (max-width:680px) {
+  .alpha-launcher { right:12px;bottom:12px; padding:5px 12px 5px 5px; }
+  .alpha-launcher .alpha-photo { width:40px;height:40px; }
+  .alpha-panel { right:8px;left:8px;width:auto;bottom:69px;max-height: min(610px,calc(100dvh - 87px)); }
+}
+@media (prefers-reduced-motion: reduce) { .alpha-assistant * { scroll-behavior:auto!important; transition:none!important; } }
